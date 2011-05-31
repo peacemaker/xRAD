@@ -17,10 +17,6 @@ import utils.filesystem.file.listener.ISetupFileEventListener;
 import utils.filesystem.file.scaner.impl.FilesScaner;
 
 /**
- * 
- */
-
-/**
  * @author denis
  */
 @RunWith(PowerMockRunner.class)
@@ -32,15 +28,6 @@ public class FilesScanerTest {
     final String destinationDerectoryPath = "destinationDerectoryPath";
 
     final String directoryPath            = "directoryPath";
-
-    protected class FileFindEventListener implements ISetupFileEventListener {
-
-        @Override
-        public boolean update(File file) {
-            return false;
-        }
-
-    }
 
     /**
      * @throws java.lang.Exception
@@ -366,8 +353,9 @@ public class FilesScanerTest {
         /**
          * @todo Need to think
          */
-        ISetupFileEventListener listener = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
-        EasyMock.expect(listener.update(file))
+        //ISetupFileEventListener listener = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
+        ISetupFileEventListener listener = PowerMock.createMock(ISetupFileEventListener.class);
+        EasyMock.expect(listener.setup(file))
                 .andReturn(true);
 
         PowerMock.replay(listener);
@@ -389,22 +377,25 @@ public class FilesScanerTest {
         /**
          * @todo Need to think
          */        
-        ISetupFileEventListener listener01 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
-        EasyMock.expect(listener01.update(file))
+        //ISetupFileEventListener listener01 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
+        ISetupFileEventListener listener01 = PowerMock.createMock(ISetupFileEventListener.class);
+        EasyMock.expect(listener01.setup(file))
                 .andReturn(true);
 
         /**
          * @todo Need to think
          */        
-        ISetupFileEventListener listener02 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
-        EasyMock.expect(listener02.update(file))
+        //ISetupFileEventListener listener02 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
+        ISetupFileEventListener listener02 = PowerMock.createMock(ISetupFileEventListener.class);
+        EasyMock.expect(listener02.setup(file))
                 .andReturn(false);
 
         /**
          * @todo Need to think
          */        
-        ISetupFileEventListener listener03 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
-        EasyMock.expect(listener03.update(file))
+        //ISetupFileEventListener listener03 = PowerMock.createMockAndExpectNew(FileFindEventListener.class, new Class<?>[] {});
+        ISetupFileEventListener listener03 = PowerMock.createMock(ISetupFileEventListener.class);
+        EasyMock.expect(listener03.setup(file))
                 .andReturn(true);
 
         PowerMock.replay(listener01, listener02, listener03);

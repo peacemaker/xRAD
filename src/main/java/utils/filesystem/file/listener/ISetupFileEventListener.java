@@ -10,5 +10,5 @@ import java.io.File;
  *
  */
 public interface ISetupFileEventListener {
-    public boolean update(File file);
+    public boolean setup(File file);
 }

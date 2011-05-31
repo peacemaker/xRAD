@@ -105,7 +105,7 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
         boolean result = true;
 
         for (final ISetupFileEventListener observer : listeners) {
-            result = observer.update(file) && result;
+            result = observer.setup(file) && result;
         }
 
         return result;

@@ -1,13 +1,10 @@
-package utils.filesystem.directory.impl;
+package utils.filesystem.file.scaner.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.lang.reflect.Method;
-
-
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +13,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import utils.filesystem.file.IFilesScaner;
-import utils.filesystem.file.impl.FilesScaner;
 import utils.filesystem.file.listener.ISetupFileEventListener;
+import utils.filesystem.file.scaner.impl.FilesScaner;
 
 /**
  * 

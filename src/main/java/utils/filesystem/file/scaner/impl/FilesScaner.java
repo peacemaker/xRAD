@@ -1,4 +1,4 @@
-package utils.filesystem.file.impl;
+package utils.filesystem.file.scaner.impl;
 
 import java.io.File;
 import java.util.ArrayList;

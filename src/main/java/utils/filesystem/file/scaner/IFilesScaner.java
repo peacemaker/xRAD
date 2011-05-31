@@ -1,7 +1,7 @@
 /**
  * 
  */
-package utils.filesystem.file;
+package utils.filesystem.file.scaner;
 
 import java.io.File;
 

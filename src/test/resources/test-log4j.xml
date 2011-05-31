@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="CA" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" />
+		</layout>
+	</appender>
+	
+	<appender name="FA" class="org.apache.log4j.FileAppender">
+		<param name="File" value="sample.log" />
+		<param name="Threshold" value="WARN" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%-4r [%t] %-5p %c %x - %m%n" />
+		</layout>
+	</appender>
+	
+        <!-- appender name="ROLL" class="org.apache.log4j.rolling.RollingFileAppender">
+                //The active file to log to
+                <param name="file" value="/applogs/myportal/portal.log" />
+                <param name="append" value="true" />
+                <param name="encoding" value="UTF-8" />
+
+                <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+                        //The file to roll to, this is a fairly intelligent parameter, if the file
+                        //ends in .gz, it gzips it, based on the date stamp it rolls at that time, 
+                        //default is yyyy-MM-dd, (rolls at midnight)
+                        //See: http://logging.apache.org/log4j/companions/extras/apidocs/org/apache/log4j/rolling/TimeBasedRollingPolicy.html
+                        <param name="FileNamePattern" value="/applogs/myportal/portal.%d.log.gz" />
+                </rollingPolicy>
+
+                <layout class="org.apache.log4j.PatternLayout">
+                        //The log message pattern
+                        <param name="ConversionPattern" value="%5p %d{ISO8601} [%t][%x] %c - %m%n" />
+                </layout>
+        </appender -->	
+	
+        <!-- Loggers to filter out various class paths -->
+
+        <!-- logger name="org.hibernate.engine.loading.LoadContexts" additivity="false">
+                <level value="error"/>
+                <appender-ref ref="ROLL" />
+        </logger -->
+        
+        <!-- Debugging loggers -->
+        
+        <!-- Uncomment to enable debug on calpoly code only -->
+        <!-- logger name="edu.calpoly">
+                <level value="debug"/>
+                <appender-ref ref="ROLL" />
+        </logger -->
+	
+	<root>
+		<level value="OFF" />
+		<appender-ref ref="CA" />
+		<!-- appender-ref ref="FA" /-->
+	</root>
+
+</log4j:configuration>

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package utils.filesystem.directory;
+package utils.filesystem.file;
 
 import java.io.File;
 
@@ -9,7 +9,7 @@ import java.io.File;
  * @author denis
  *
  */
-public interface IDirectoriesScaner {
+public interface IFilesScaner {
     public abstract void setSourceDirectoryPath(String sourceDirectoryPath);
 
     public abstract File getSourceDirectory();

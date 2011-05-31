@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.lang.reflect.Method;
 
-import utils.filesystem.directory.impl.DirectoriesScaner;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -17,7 +16,8 @@ import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import utils.filesystem.directory.IDirectoriesScaner;
+import utils.filesystem.file.IFilesScaner;
+import utils.filesystem.file.impl.FilesScaner;
 import utils.filesystem.file.listener.ISetupFileEventListener;
 
 /**
@@ -28,8 +28,8 @@ import utils.filesystem.file.listener.ISetupFileEventListener;
  * @author denis
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DirectoriesScaner.class)
-public class DirectoriesScanerTest {
+@PrepareForTest(FilesScaner.class)
+public class FilesScanerTest {
 
     final String sourceDirectoryPath      = "sourceDirectoryPath";
 
@@ -55,7 +55,7 @@ public class DirectoriesScanerTest {
 
     /**
      * Test method for
-     * {@link DirectoriesScaner#setSourceDirectoryPath(java.lang.String)}.
+     * {@link FilesScaner#setSourceDirectoryPath(java.lang.String)}.
      * 
      * @throws Exception
      */
@@ -65,7 +65,7 @@ public class DirectoriesScanerTest {
 
         PowerMock.replayAll();
         
-        DirectoriesScaner object = new DirectoriesScaner();
+        FilesScaner object = new FilesScaner();
         object.setSourceDirectoryPath(sourceDirectoryPath);
 
         assertEquals(object.getSourceDirectory(), file);
@@ -74,7 +74,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-not exist folder
      * 
      * @throws Exception
@@ -87,7 +87,7 @@ public class DirectoriesScanerTest {
 
         PowerMock.replayAll();
 
-        DirectoriesScaner object = new DirectoriesScaner();
+        FilesScaner object = new FilesScaner();
         object.setSourceDirectoryPath(directoryPath);
 
         assertFalse(object.execute());
@@ -96,7 +96,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-not exist folder
      * 
      * @throws Exception
@@ -110,7 +110,7 @@ public class DirectoriesScanerTest {
 
         PowerMock.replayAll();
 
-        DirectoriesScaner object = new DirectoriesScaner();
+        FilesScaner object = new FilesScaner();
         object.setSourceDirectoryPath(directoryPath);
 
         assertFalse(object.execute());
@@ -119,7 +119,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-folder0A
      * | |
      * | |-file01.xml
@@ -145,7 +145,7 @@ public class DirectoriesScanerTest {
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
         EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {file01, file02});
 
-        DirectoriesScaner object = PowerMock.createPartialMock(DirectoriesScaner.class, "notifyListener");
+        FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
         PowerMock.expectPrivate(object, "notifyListener", file02).andReturn(true);
 
@@ -159,7 +159,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-folder0A
      * | |
      * | |-subfolder01
@@ -192,7 +192,7 @@ public class DirectoriesScanerTest {
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
         EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01});
 
-        DirectoriesScaner object = PowerMock.createPartialMock(DirectoriesScaner.class, "notifyListener");
+        FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
         PowerMock.expectPrivate(object, "notifyListener", file02).andReturn(true);
 
@@ -206,7 +206,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-folder0A
      * | |
      * | |-subfolder01
@@ -268,7 +268,7 @@ public class DirectoriesScanerTest {
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
         EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01, subfolder02, subfolder03, file04});
 
-        DirectoriesScaner object = PowerMock.createPartialMock(DirectoriesScaner.class, "notifyListener");
+        FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
         PowerMock.expectPrivate(object, "notifyListener", file02).andReturn(true);
         PowerMock.expectPrivate(object, "notifyListener", file03).andReturn(true);
@@ -284,7 +284,7 @@ public class DirectoriesScanerTest {
     }
 
     /**
-     * Test method for {@link DirectoriesScaner#execute()}.
+     * Test method for {@link FilesScaner#execute()}.
      * |-folder0A
      * | |
      * | |-subfolder01
@@ -346,7 +346,7 @@ public class DirectoriesScanerTest {
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
         EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01, subfolder02, subfolder03, file04});
 
-        DirectoriesScaner object = PowerMock.createPartialMock(DirectoriesScaner.class, "notifyListener");
+        FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
         PowerMock.expectPrivate(object, "notifyListener", file02).andReturn(false);
         PowerMock.expectPrivate(object, "notifyListener", file03).andReturn(true);
@@ -364,7 +364,7 @@ public class DirectoriesScanerTest {
     public void notifyListener() throws Exception {
         File file = new File("");
 
-        DirectoriesScaner object = new DirectoriesScaner();
+        FilesScaner object = new FilesScaner();
         object.setSourceDirectoryPath(sourceDirectoryPath);
 
         /**
@@ -387,7 +387,7 @@ public class DirectoriesScanerTest {
     public void notifyListenerMany() throws Exception {
         File file = new File("");
 
-        DirectoriesScaner object = new DirectoriesScaner();
+        FilesScaner object = new FilesScaner();
         object.setSourceDirectoryPath(sourceDirectoryPath);
 
         /**

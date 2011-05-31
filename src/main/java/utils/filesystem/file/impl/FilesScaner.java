@@ -1,4 +1,4 @@
-package utils.filesystem.directory.impl;
+package utils.filesystem.file.impl;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,13 +6,13 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import utils.filesystem.directory.IDirectoriesScaner;
+import utils.filesystem.file.IFilesScaner;
 import utils.filesystem.file.event.ISetupFileEvent;
 import utils.filesystem.file.listener.ISetupFileEventListener;
 
-public class DirectoriesScaner implements IDirectoriesScaner, ISetupFileEvent {
+public class FilesScaner implements IFilesScaner, ISetupFileEvent {
 
-    private static Logger             logger = Logger.getLogger(DirectoriesScaner.class);
+    private static Logger             logger = Logger.getLogger(FilesScaner.class);
 
     protected File                    sourceDirectory;
 
@@ -20,7 +20,7 @@ public class DirectoriesScaner implements IDirectoriesScaner, ISetupFileEvent {
 
     protected List<ISetupFileEventListener> listeners;
 
-    public DirectoriesScaner() {
+    public FilesScaner() {
         listeners = new ArrayList<ISetupFileEventListener>();
     }
 

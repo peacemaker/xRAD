@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import utils.filesystem.file.IFilesScaner;
+import utils.filesystem.file.scaner.IFilesScaner;
 import utils.filesystem.file.event.ISetupFileEvent;
 import utils.filesystem.file.listener.ISetupFileEventListener;
 

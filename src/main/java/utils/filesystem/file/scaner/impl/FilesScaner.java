@@ -6,17 +6,15 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import utils.filesystem.file.scaner.IFilesScaner;
 import utils.filesystem.file.event.ISetupFileEvent;
 import utils.filesystem.file.listener.ISetupFileEventListener;
+import utils.filesystem.file.scaner.IFilesScaner;
 
 public class FilesScaner implements IFilesScaner, ISetupFileEvent {
 
-    private static Logger             logger = Logger.getLogger(FilesScaner.class);
+    private static Logger                   logger = Logger.getLogger(FilesScaner.class);
 
-    protected File                    sourceDirectory;
-
-    //protected IFileContentAnalizator  fileContentAnalizator;
+    protected File                          sourceDirectory;
 
     protected List<ISetupFileEventListener> listeners;
 
@@ -29,8 +27,8 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
      * @see IDirectoriesParser#setSourceDirectoryPath(java.lang.String)
      */
     @Override
-    public void setSourceDirectoryPath(String sourceDirectoryPath) {
-        sourceDirectory = new File(sourceDirectoryPath);
+    public void setSourceDirectory(final File file) {
+        sourceDirectory = file;
     }
 
     @Override
@@ -66,7 +64,7 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
      *            directory
      * @return boolean
      */
-    protected boolean parseDirectory(File directory) {
+    protected boolean parseDirectory(final File directory) {
         boolean result = true;
         final File[] items = directory.listFiles();
 
@@ -96,16 +94,16 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
     }
 
     @Override
-    public void attach(ISetupFileEventListener listener) {
+    public void attach(final ISetupFileEventListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public boolean notifyListener(File file) {
+    public boolean notifyListener(final File file) {
         boolean result = true;
 
         for (final ISetupFileEventListener observer : listeners) {
-            result = observer.setup(file) && result;
+            result = observer.update(file) && result;
         }
 
         return result;

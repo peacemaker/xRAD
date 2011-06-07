@@ -9,7 +9,7 @@ import utils.filesystem.file.listener.ISetupFileEventListener;
 
 /**
  * @author denis
- *
+ * 
  */
 public interface ISetupFileEvent {
     /**

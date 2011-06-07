@@ -10,7 +10,7 @@ import java.io.File;
  *
  */
 public interface IFilesScaner {
-    public abstract void setSourceDirectoryPath(String sourceDirectoryPath);
+    public abstract void setSourceDirectory(File file);
 
     public abstract File getSourceDirectory();
 

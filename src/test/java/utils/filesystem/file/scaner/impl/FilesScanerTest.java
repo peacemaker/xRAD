@@ -37,23 +37,18 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for
-     * {@link FilesScaner#setSourceDirectoryPath(java.lang.String)}.
+     * Test method for {@link FilesScaner#setSourceDirectory(File)}.
      * 
      * @throws Exception
      */
     @Test
     public void testSetSourceDirectoryPath() throws Exception {
-    	File file = PowerMock.createMockAndExpectNew(File.class, sourceDirectoryPath);
+        File file = new File(sourceDirectoryPath);
 
-        PowerMock.replayAll();
-        
         FilesScaner object = new FilesScaner();
-        object.setSourceDirectoryPath(sourceDirectoryPath);
+        object.setSourceDirectory(file);
 
         assertEquals(object.getSourceDirectory(), file);
-
-        PowerMock.verifyAll();
     }
 
     /**
@@ -64,14 +59,14 @@ public class FilesScanerTest {
      */
     @Test
     public void testExecuteNotExistDirectory() throws Exception {
-        File fileSystem = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File fileSystem = PowerMock.createMock(File.class);
         EasyMock.expect(fileSystem.exists()).andReturn(false);
         EasyMock.expect(fileSystem.getAbsolutePath()).andReturn(directoryPath);
 
         PowerMock.replayAll();
 
         FilesScaner object = new FilesScaner();
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(fileSystem);
 
         assertFalse(object.execute());
 
@@ -86,7 +81,7 @@ public class FilesScanerTest {
      */
     @Test
     public void testExecuteNotDirectory() throws Exception {
-        File fileSystem = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File fileSystem = PowerMock.createMock(File.class);
         EasyMock.expect(fileSystem.exists()).andReturn(true);
         EasyMock.expect(fileSystem.isDirectory()).andReturn(false);
         EasyMock.expect(fileSystem.getAbsolutePath()).andReturn(directoryPath);
@@ -94,7 +89,7 @@ public class FilesScanerTest {
         PowerMock.replayAll();
 
         FilesScaner object = new FilesScaner();
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(fileSystem);
 
         assertFalse(object.execute());
 
@@ -123,10 +118,10 @@ public class FilesScanerTest {
         EasyMock.expect(file02.isDirectory()).andReturn(false);
         EasyMock.expect(file02.getAbsolutePath()).andReturn("folder0A/file02.xml");
 
-        File folder0A = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File folder0A = PowerMock.createMock(File.class);
         EasyMock.expect(folder0A.exists()).andReturn(true);
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
-        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {file01, file02});
+        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] { file01, file02 });
 
         FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
@@ -134,7 +129,7 @@ public class FilesScanerTest {
 
         PowerMock.replayAll();
 
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(folder0A);
 
         assertTrue(object.execute());
 
@@ -148,7 +143,7 @@ public class FilesScanerTest {
      * | |-subfolder01
      * | | |-file01.xml
      * | | |-file02.xml
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -168,12 +163,12 @@ public class FilesScanerTest {
 
         EasyMock.expect(subfolder01.exists()).andReturn(true);
         EasyMock.expect(subfolder01.isDirectory()).andReturn(true);
-        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] {file01, file02});
+        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] { file01, file02 });
 
-        File folder0A = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File folder0A = PowerMock.createMock(File.class);
         EasyMock.expect(folder0A.exists()).andReturn(true);
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
-        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01});
+        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] { subfolder01 });
 
         FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
@@ -181,7 +176,7 @@ public class FilesScanerTest {
 
         PowerMock.replayAll();
 
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(folder0A);
 
         assertTrue(object.execute());
 
@@ -202,7 +197,7 @@ public class FilesScanerTest {
      * | | |-file03.xml
      * | |
      * | |-file04.xml
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -221,7 +216,7 @@ public class FilesScanerTest {
         File subfolder01 = PowerMock.createMock(File.class);
         EasyMock.expect(subfolder01.exists()).andReturn(true);
         EasyMock.expect(subfolder01.isDirectory()).andReturn(true);
-        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] {file01, file02});
+        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] { file01, file02 });
 
         // making fixture for subfolder02
         File subfolder02 = PowerMock.createMock(File.class);
@@ -238,7 +233,7 @@ public class FilesScanerTest {
         File subfolder03 = PowerMock.createMock(File.class);
         EasyMock.expect(subfolder03.exists()).andReturn(true);
         EasyMock.expect(subfolder03.isDirectory()).andReturn(true);
-        EasyMock.expect(subfolder03.listFiles()).andReturn(new File[] {file03});
+        EasyMock.expect(subfolder03.listFiles()).andReturn(new File[] { file03 });
 
         // making fixture for folder0A
         File file04 = PowerMock.createMock(File.class);
@@ -246,10 +241,10 @@ public class FilesScanerTest {
         EasyMock.expect(file04.isDirectory()).andReturn(false);
         EasyMock.expect(file04.getAbsolutePath()).andReturn("folder0A/file03.xml");
 
-        File folder0A = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File folder0A = PowerMock.createMock(File.class);
         EasyMock.expect(folder0A.exists()).andReturn(true);
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
-        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01, subfolder02, subfolder03, file04});
+        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] { subfolder01, subfolder02, subfolder03, file04 });
 
         FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
@@ -259,7 +254,7 @@ public class FilesScanerTest {
 
         PowerMock.replayAll();
 
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(folder0A);
 
         assertTrue(object.execute());
 
@@ -299,7 +294,7 @@ public class FilesScanerTest {
         File subfolder01 = PowerMock.createMock(File.class);
         EasyMock.expect(subfolder01.exists()).andReturn(true);
         EasyMock.expect(subfolder01.isDirectory()).andReturn(true);
-        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] {file01, file02});
+        EasyMock.expect(subfolder01.listFiles()).andReturn(new File[] { file01, file02 });
 
         // making fixture for subfolder02
         File subfolder02 = PowerMock.createMock(File.class);
@@ -316,7 +311,7 @@ public class FilesScanerTest {
         File subfolder03 = PowerMock.createMock(File.class);
         EasyMock.expect(subfolder03.exists()).andReturn(true);
         EasyMock.expect(subfolder03.isDirectory()).andReturn(true);
-        EasyMock.expect(subfolder03.listFiles()).andReturn(new File[] {file03});
+        EasyMock.expect(subfolder03.listFiles()).andReturn(new File[] { file03 });
 
         // making fixture for folder0A
         File file04 = PowerMock.createMock(File.class);
@@ -324,10 +319,10 @@ public class FilesScanerTest {
         EasyMock.expect(file04.isDirectory()).andReturn(false);
         EasyMock.expect(file04.getAbsolutePath()).andReturn("folder0A/file03.xml");
 
-        File folder0A = PowerMock.createMockAndExpectNew(File.class, directoryPath);
+        File folder0A = PowerMock.createMock(File.class);
         EasyMock.expect(folder0A.exists()).andReturn(true);
         EasyMock.expect(folder0A.isDirectory()).andReturn(true);
-        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] {subfolder01, subfolder02, subfolder03, file04});
+        EasyMock.expect(folder0A.listFiles()).andReturn(new File[] { subfolder01, subfolder02, subfolder03, file04 });
 
         FilesScaner object = PowerMock.createPartialMock(FilesScaner.class, "notifyListener");
         PowerMock.expectPrivate(object, "notifyListener", file01).andReturn(true);
@@ -337,7 +332,7 @@ public class FilesScanerTest {
 
         PowerMock.replayAll();
 
-        object.setSourceDirectoryPath(directoryPath);
+        object.setSourceDirectory(folder0A);
         assertFalse(object.execute());
 
         PowerMock.verifyAll();
@@ -348,11 +343,10 @@ public class FilesScanerTest {
         File file = new File("");
 
         FilesScaner object = new FilesScaner();
-        object.setSourceDirectoryPath(sourceDirectoryPath);
+        object.setSourceDirectory(file);
 
         ISetupFileEventListener listener = PowerMock.createMock(ISetupFileEventListener.class);
-        EasyMock.expect(listener.setup(file))
-                .andReturn(true);
+        EasyMock.expect(listener.update(file)).andReturn(true);
 
         PowerMock.replay(listener);
 
@@ -368,19 +362,16 @@ public class FilesScanerTest {
         File file = new File("");
 
         FilesScaner object = new FilesScaner();
-        object.setSourceDirectoryPath(sourceDirectoryPath);
+        object.setSourceDirectory(file);
 
         ISetupFileEventListener listener01 = PowerMock.createMock(ISetupFileEventListener.class);
-        EasyMock.expect(listener01.setup(file))
-                .andReturn(true);
+        EasyMock.expect(listener01.update(file)).andReturn(true);
 
         ISetupFileEventListener listener02 = PowerMock.createMock(ISetupFileEventListener.class);
-        EasyMock.expect(listener02.setup(file))
-                .andReturn(false);
+        EasyMock.expect(listener02.update(file)).andReturn(false);
 
         ISetupFileEventListener listener03 = PowerMock.createMock(ISetupFileEventListener.class);
-        EasyMock.expect(listener03.setup(file))
-                .andReturn(true);
+        EasyMock.expect(listener03.update(file)).andReturn(true);
 
         PowerMock.replay(listener01, listener02, listener03);
 

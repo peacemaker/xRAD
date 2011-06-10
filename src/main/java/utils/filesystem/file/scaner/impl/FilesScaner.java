@@ -10,6 +10,13 @@ import utils.filesystem.file.event.ISetupFileEvent;
 import utils.filesystem.file.listener.ISetupFileEventListener;
 import utils.filesystem.file.scaner.IFilesScaner;
 
+/**
+ * 
+ * 
+ * @author    Denys Solyanyk <peacemaker@ukr.net>
+ * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
+ * @since     9 июня 2011
+ */
 public class FilesScaner implements IFilesScaner, ISetupFileEvent {
 
     private static Logger                   logger = Logger.getLogger(FilesScaner.class);

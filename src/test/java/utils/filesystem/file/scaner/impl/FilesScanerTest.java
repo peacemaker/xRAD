@@ -23,11 +23,9 @@ import utils.filesystem.file.scaner.impl.FilesScaner;
 @PrepareForTest(FilesScaner.class)
 public class FilesScanerTest {
 
-    final String sourceDirectoryPath      = "sourceDirectoryPath";
+    final String sourceDirectoryPath = "sourceDirectoryPath";
 
-    final String destinationDerectoryPath = "destinationDerectoryPath";
-
-    final String directoryPath            = "directoryPath";
+    final String directoryPath       = "directoryPath";
 
     /**
      * @throws java.lang.Exception

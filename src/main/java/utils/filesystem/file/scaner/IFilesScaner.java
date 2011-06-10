@@ -6,8 +6,11 @@ package utils.filesystem.file.scaner;
 import java.io.File;
 
 /**
- * @author denis
- *
+ * 
+ * 
+ * @author    Denys Solyanyk <peacemaker@ukr.net>
+ * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
+ * @since     9 июня 2011
  */
 public interface IFilesScaner {
     public abstract void setSourceDirectory(File file);

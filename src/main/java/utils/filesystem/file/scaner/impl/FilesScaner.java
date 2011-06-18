@@ -13,9 +13,9 @@ import utils.filesystem.file.scaner.IFilesScaner;
 /**
  * 
  * 
- * @author    Denys Solyanyk <peacemaker@ukr.net>
+ * @author Denys Solyanyk <peacemaker@ukr.net>
  * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
- * @since     9 июня 2011
+ * @since 9 июня 2011
  */
 public class FilesScaner implements IFilesScaner, ISetupFileEvent {
 
@@ -36,6 +36,7 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
     @Override
     public void setSourceDirectory(final File file) {
         sourceDirectory = file;
+        logger.info(String.format("set Source : %1$s", sourceDirectory.getAbsolutePath()));
     }
 
     @Override
@@ -49,20 +50,36 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
      */
     @Override
     public boolean execute() {
-        if (!sourceDirectory.exists() || !sourceDirectory.isDirectory()) {
-            logger.error("Is not a directory : " + sourceDirectory.getAbsolutePath());
+        logger.info("-----");
+        logger.info(String.format("Start execute for file : %1$s", sourceDirectory.getAbsolutePath()));
+        if (!sourceDirectory.exists()) {
+            logger.error(String.format("Execute (sourceDirectory.exists()) FAIL for directory : %1$s",
+                    sourceDirectory.getAbsolutePath()));
 
             return false;
         }
 
-        // if (!sourceDirectory.canRead()) {
-        // logger.error("Have no permission (read) for : " +
-        // sourceDirectory.getAbsolutePath());
-        //
-        // return false;
-        // }
+        if (!sourceDirectory.isDirectory()) {
+            logger.error(String.format("Execute (sourceDirectory.isDirectory()) FAIL for directory : %1$s",
+                    sourceDirectory.getAbsolutePath()));
 
-        return parseDirectory(sourceDirectory);
+            return false;
+        }
+
+        if (!sourceDirectory.canRead()) {
+            logger.error(String.format("Execute (sourceDirectory.canRead()) FAIL for directory : %1$s",
+                    sourceDirectory.getAbsolutePath()));
+
+            return false;
+        }
+
+        if (!parseDirectory(sourceDirectory)) {
+            logger.error(String.format("Parse FAIL for directory : %1$s", sourceDirectory.getAbsolutePath()));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -88,13 +105,13 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
             }
 
             if (!notifyListener(item)) {
-                logger.info("File : " + item.getAbsolutePath() + " - error");
+                logger.info(String.format("File : %1$s - error", item.getAbsolutePath()));
                 result = false;
 
                 continue;
             }
 
-            logger.info("File : " + item.getAbsolutePath() + " - ok");
+            logger.info(String.format("File : %1$s - ok", item.getAbsolutePath()));
         }
 
         return result;

@@ -4,6 +4,8 @@
 package handler.impl;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
@@ -21,28 +23,37 @@ abstract public class FileHandler implements ISetupFileEventListener {
     private static Logger logger = Logger.getLogger(FileHandler.class);
 
     protected File        destination;
+    protected Pattern     fileNamePattern;
 
     public void setDestination(final File destination) {
         this.destination = destination;
-        logger.info(String.format("set destination : %1$s", this.destination.getAbsolutePath()));
+        FileHandler.logger.info(String.format("set destination : %1$s", this.destination.getAbsolutePath()));
     }
 
     public File getDestination() {
         return destination;
     }
 
+    public Pattern getFileNamePattern() {
+        return fileNamePattern;
+    }
+
+    public void setFileNamePattern(Pattern fileNamePattern) {
+        this.fileNamePattern = fileNamePattern;
+    }
+
     @Override
     public boolean update(final File file) {
-        logger.info("--------");
-        logger.info(String.format("Start update for file : %1$s", file.getAbsolutePath()));
+        FileHandler.logger.info("--------");
+        FileHandler.logger.info(String.format("Start update for file : %1$s", file.getAbsolutePath()));
         if (!processFileValidation(file)) {
-            logger.error(String.format("Validation FAIL for file : %1$s", file.getAbsolutePath()));
+            FileHandler.logger.error(String.format("Validation FAIL for file : %1$s", file.getAbsolutePath()));
 
             return false;
         }
 
         if (!processFile(file)) {
-            logger.error(String.format("Process FAIL for file : %1$s", file.getAbsolutePath()));
+            FileHandler.logger.error(String.format("Process FAIL for file : %1$s", file.getAbsolutePath()));
 
             return false;
         }
@@ -52,56 +63,40 @@ abstract public class FileHandler implements ISetupFileEventListener {
 
     protected boolean processFileValidation(File file) {
         if (!file.exists()) {
-            logger.error(String.format("Validation (file.exists()) FAIL for file : %1$s", file.getAbsolutePath()));
+            FileHandler.logger.error(String.format("Validation (file.exists()) FAIL for file : %1$s",
+                file.getAbsolutePath()));
 
             return false;
         }
 
         if (!file.isFile()) {
-            logger.error(String.format("Validation (file.isFile()) FAIL for file : %1$s", file.getAbsolutePath()));
+            FileHandler.logger.error(String.format("Validation (file.isFile()) FAIL for file : %1$s",
+                file.getAbsolutePath()));
 
             return false;
         }
 
         if (!file.canRead()) {
-            logger.error(String.format("Validation (file.canRead()) FAIL for file : %1$s", file.getAbsolutePath()));
+            FileHandler.logger.error(String.format("Validation (file.canRead()) FAIL for file : %1$s",
+                file.getAbsolutePath()));
 
             return false;
         }
 
-        if (getFileExtension(file) != getProcessedFileExtension()) {
-            logger.info(String.format("Validation (file extension) FAIL for file : %1$s", file.getAbsolutePath()));
+        String filename = file.getName();
+
+        Matcher matcher = fileNamePattern.matcher(filename);
+        if (!matcher.matches()) {
+            FileHandler.logger.info(String.format("Validation (file name %2$s) FAIL for file : %1$s",
+                file.getAbsolutePath(), fileNamePattern.pattern()));
 
             return false;
         }
 
-        logger.info(String.format("Validation OK for file : %1$s", file.getAbsolutePath()));
+        FileHandler.logger.info(String.format("Validation OK for file : %1$s", file.getAbsolutePath()));
 
         return true;
     }
-
-    /**
-     * 
-     * TODO Is it Possible to move this method to FileUtility class?
-     * 
-     * @return String
-     */
-    protected String getFileExtension(File file) {
-        final String fileName = file.getName();
-
-        if (fileName == "") {
-            return "";
-        }
-
-        final int lastDotPosition = fileName.lastIndexOf('.');
-        if (lastDotPosition < 0) {
-            return "";
-        }
-
-        return fileName.substring(lastDotPosition + 1, fileName.length());
-    }
-
-    abstract protected String getProcessedFileExtension();
 
     abstract protected boolean processFile(File file);
 

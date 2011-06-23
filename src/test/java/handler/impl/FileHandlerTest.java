@@ -3,14 +3,13 @@
  */
 package handler.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,12 +20,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 /**
- * @author denis
  * 
+ * 
+ * @author Denys Solyanyk <peacemaker@ukr.net>
+ * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
+ * @since 9 июня 2011
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({FileHandler.class})
-@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.apache.log4j.LogManager"})
+@PrepareForTest({ FileHandler.class })
+@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.apache.log4j.LogManager" })
 public class FileHandlerTest {
 
     final String     filePath = "/path/to/file";
@@ -48,20 +50,31 @@ public class FileHandlerTest {
         // prepare fileMock object for testing
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
         fileHandler.setDestination(fileMock);
-        assertEquals(fileHandler.getDestination(), fileMock);
+        Assert.assertEquals(fileHandler.getDestination(), fileMock);
+
+        PowerMock.verifyAll();
+    }
+
+    @Test
+    public void getFileNamePattern() {
+        Pattern pattern = Pattern.compile("a");
+
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
+
+        PowerMock.replayAll();
+
+        fileHandler.setFileNamePattern(pattern);
+        Assert.assertEquals(fileHandler.getFileNamePattern(), pattern);
 
         PowerMock.verifyAll();
     }
 
     /**
-     * 
-     * 
      * 
      * @throws Exception
      */
@@ -76,7 +89,7 @@ public class FileHandlerTest {
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.update(fileMock));
+        Assert.assertFalse(fileHandler.update(fileMock));
 
         PowerMock.verifyAll();
     }
@@ -87,13 +100,13 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
         final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "processFileValidation", "processFile"});
+                "processFileValidation", "processFile" });
         PowerMock.expectPrivate(fileHandler, "processFileValidation", fileMock).andReturn(true);
         PowerMock.expectPrivate(fileHandler, "processFile", fileMock).andReturn(false);
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.update(fileMock));
+        Assert.assertFalse(fileHandler.update(fileMock));
 
         PowerMock.verifyAll();
     }
@@ -104,12 +117,11 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.exists()).andReturn(false);
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.processFileValidation(fileMock));
+        Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
         PowerMock.verifyAll();
     }
@@ -120,12 +132,11 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.isFile()).andReturn(false);
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.processFileValidation(fileMock));
+        Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
         PowerMock.verifyAll();
     }
@@ -137,31 +148,38 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.canRead()).andReturn(false);
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.processFileValidation(fileMock));
+        Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
         PowerMock.verifyAll();
     }
 
     @Test
-    public void incorrectFileExtension() throws Exception {
+    public void incorrectFileName() {
         EasyMock.expect(fileMock.exists()).andReturn(true);
         EasyMock.expect(fileMock.isFile()).andReturn(true);
         EasyMock.expect(fileMock.canRead()).andReturn(true);
+        EasyMock.expect(fileMock.getName()).andReturn("test.test");
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {"processFile",
-                "getDefaultFileExtension", "getFileExtension"});
-        PowerMock.expectPrivate(fileHandler, "getFileExtension", fileMock).andReturn("extension");
-        PowerMock.expectPrivate(fileHandler, "getProcessedFileExtension").andReturn("");
+        // create mock Matcher object
+        Matcher matcherMock = PowerMock.createMock(Matcher.class);
+        EasyMock.expect(matcherMock.matches()).andReturn(false);
+
+        // create mock Pattern object
+        Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
+        EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
+        EasyMock.expect(fileNamePatternMock.pattern()).andReturn("a");
+
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
-        assertFalse(fileHandler.processFileValidation(fileMock));
+        fileHandler.fileNamePattern = fileNamePatternMock;
+        Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
         PowerMock.verifyAll();
     }
@@ -171,59 +189,25 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.exists()).andReturn(true);
         EasyMock.expect(fileMock.isFile()).andReturn(true);
         EasyMock.expect(fileMock.canRead()).andReturn(true);
+        EasyMock.expect(fileMock.getName()).andReturn("test.test");
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {"processFile",
-                "getDefaultFileExtension", "getFileExtension"});
-        PowerMock.expectPrivate(fileHandler, "getFileExtension", fileMock).andReturn("extension");
-        PowerMock.expectPrivate(fileHandler, "getProcessedFileExtension").andReturn("extension");
+        // create mock Matcher object
+        Matcher matcherMock = PowerMock.createMock(Matcher.class);
+        EasyMock.expect(matcherMock.matches()).andReturn(true);
+
+        // create mock Pattern object
+        Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
+        EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
+
+        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
         PowerMock.replayAll();
 
-        assertTrue(fileHandler.processFileValidation(fileMock));
+        fileHandler.fileNamePattern = fileNamePatternMock;
+        Assert.assertTrue(fileHandler.processFileValidation(fileMock));
 
         PowerMock.verifyAll();
     }
 
-    @Test
-    public void emptyFileName() {
-        EasyMock.expect(fileMock.getName()).andReturn("");
-
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
-
-        PowerMock.replayAll();
-
-        assertEquals("", fileHandler.getFileExtension(fileMock));
-
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void emptyFileExtension() {
-        EasyMock.expect(fileMock.getName()).andReturn("test");
-
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
-
-        PowerMock.replayAll();
-
-        assertEquals("", fileHandler.getFileExtension(fileMock));
-
-        PowerMock.verifyAll();
-    }
-
-    @Test
-    public void getFileExtension() {
-        EasyMock.expect(fileMock.getName()).andReturn("test.test.xml");
-
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "getDefaultFileExtension", "processFile"});
-
-        PowerMock.replayAll();
-
-        assertEquals("xml", fileHandler.getFileExtension(fileMock));
-
-        PowerMock.verifyAll();
-    }
 }

@@ -22,8 +22,6 @@ abstract public class FileHandler implements ISetupFileEventListener {
 
     protected File        destination;
 
-    protected File        file;
-
     public void setDestination(final File destination) {
         this.destination = destination;
         logger.info(String.format("set destination : %1$s", this.destination.getAbsolutePath()));
@@ -35,17 +33,16 @@ abstract public class FileHandler implements ISetupFileEventListener {
 
     @Override
     public boolean update(final File file) {
-        this.file = file;
         logger.info("--------");
-        logger.info(String.format("Start update for file : %1$s", this.file.getAbsolutePath()));
-        if (!processFileValidation()) {
-            logger.error(String.format("Validation FAIL for file : %1$s", this.file.getAbsolutePath()));
+        logger.info(String.format("Start update for file : %1$s", file.getAbsolutePath()));
+        if (!processFileValidation(file)) {
+            logger.error(String.format("Validation FAIL for file : %1$s", file.getAbsolutePath()));
 
             return false;
         }
 
-        if (!processFile()) {
-            logger.error(String.format("Process FAIL for file : %1$s", this.file.getAbsolutePath()));
+        if (!processFile(file)) {
+            logger.error(String.format("Process FAIL for file : %1$s", file.getAbsolutePath()));
 
             return false;
         }
@@ -53,7 +50,7 @@ abstract public class FileHandler implements ISetupFileEventListener {
         return true;
     }
 
-    protected boolean processFileValidation() {
+    protected boolean processFileValidation(File file) {
         if (!file.exists()) {
             logger.error(String.format("Validation (file.exists()) FAIL for file : %1$s", file.getAbsolutePath()));
 
@@ -72,7 +69,7 @@ abstract public class FileHandler implements ISetupFileEventListener {
             return false;
         }
 
-        if (getFileExtension() != getDefaultFileExtension()) {
+        if (getFileExtension(file) != getProcessedFileExtension()) {
             logger.info(String.format("Validation (file extension) FAIL for file : %1$s", file.getAbsolutePath()));
 
             return false;
@@ -83,7 +80,13 @@ abstract public class FileHandler implements ISetupFileEventListener {
         return true;
     }
 
-    protected String getFileExtension() {
+    /**
+     * 
+     * TODO Is it Possible to move this method to FileUtility class?
+     * 
+     * @return String
+     */
+    protected String getFileExtension(File file) {
         final String fileName = file.getName();
 
         if (fileName == "") {
@@ -98,8 +101,8 @@ abstract public class FileHandler implements ISetupFileEventListener {
         return fileName.substring(lastDotPosition + 1, fileName.length());
     }
 
-    abstract protected String getDefaultFileExtension();
+    abstract protected String getProcessedFileExtension();
 
-    abstract protected boolean processFile();
+    abstract protected boolean processFile(File file);
 
 }

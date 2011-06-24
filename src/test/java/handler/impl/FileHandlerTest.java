@@ -46,23 +46,8 @@ public class FileHandlerTest {
     }
 
     @Test
-    public void getSetDestination() {
-        // prepare fileMock object for testing
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
-
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
-        fileHandler.setDestination(fileMock);
-        Assert.assertEquals(fileHandler.getDestination(), fileMock);
-
-        PowerMock.verifyAll();
-    }
-
-    @Test
     public void getFileNamePattern() {
-        Pattern pattern = Pattern.compile("a");
+        final Pattern pattern = Pattern.compile("a");
 
         final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
 
@@ -166,11 +151,11 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
         // create mock Matcher object
-        Matcher matcherMock = PowerMock.createMock(Matcher.class);
+        final Matcher matcherMock = PowerMock.createMock(Matcher.class);
         EasyMock.expect(matcherMock.matches()).andReturn(false);
 
         // create mock Pattern object
-        Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
+        final Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
         EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
         EasyMock.expect(fileNamePatternMock.pattern()).andReturn("a");
 
@@ -193,11 +178,11 @@ public class FileHandlerTest {
         EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
 
         // create mock Matcher object
-        Matcher matcherMock = PowerMock.createMock(Matcher.class);
+        final Matcher matcherMock = PowerMock.createMock(Matcher.class);
         EasyMock.expect(matcherMock.matches()).andReturn(true);
 
         // create mock Pattern object
-        Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
+        final Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
         EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
 
         final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });

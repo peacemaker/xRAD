@@ -22,23 +22,13 @@ abstract public class FileHandler implements ISetupFileEventListener {
 
     private static Logger logger = Logger.getLogger(FileHandler.class);
 
-    protected File        destination;
     protected Pattern     fileNamePattern;
-
-    public void setDestination(final File destination) {
-        this.destination = destination;
-        FileHandler.logger.info(String.format("set destination : %1$s", this.destination.getAbsolutePath()));
-    }
-
-    public File getDestination() {
-        return destination;
-    }
 
     public Pattern getFileNamePattern() {
         return fileNamePattern;
     }
 
-    public void setFileNamePattern(Pattern fileNamePattern) {
+    public void setFileNamePattern(final Pattern fileNamePattern) {
         this.fileNamePattern = fileNamePattern;
     }
 
@@ -61,7 +51,7 @@ abstract public class FileHandler implements ISetupFileEventListener {
         return true;
     }
 
-    protected boolean processFileValidation(File file) {
+    protected boolean processFileValidation(final File file) {
         if (!file.exists()) {
             FileHandler.logger.error(String.format("Validation (file.exists()) FAIL for file : %1$s",
                 file.getAbsolutePath()));
@@ -83,9 +73,9 @@ abstract public class FileHandler implements ISetupFileEventListener {
             return false;
         }
 
-        String filename = file.getName();
+        final String filename = file.getName();
 
-        Matcher matcher = fileNamePattern.matcher(filename);
+        final Matcher matcher = fileNamePattern.matcher(filename);
         if (!matcher.matches()) {
             FileHandler.logger.info(String.format("Validation (file name %2$s) FAIL for file : %1$s",
                 file.getAbsolutePath(), fileNamePattern.pattern()));

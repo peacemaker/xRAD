@@ -3,21 +3,33 @@
  */
 package handler.impl;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.doNothing;
+import static org.powermock.api.mockito.PowerMockito.doReturn;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.easymock.PowerMock;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+import org.slf4j.Logger;
+
+import utils.filesystem.file.scaner.impl.FilesScaner;
 
 /**
  * 
@@ -27,36 +39,33 @@ import org.powermock.reflect.Whitebox;
  * @since 9 июня 2011
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ FileHandler.class })
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.apache.log4j.LogManager" })
+@PrepareForTest(FileHandler.class)
+@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
 public class FileHandlerTest {
 
-    final String     filePath = "/path/to/file";
+    final String          filePath    = "/path/to/file";
 
-    protected Logger loggerMock;
-    protected File   fileMock;
+    protected Logger      loggerMock;
+
+    protected FileHandler fileHandler = Mockito.mock(FileHandler.class, Mockito.CALLS_REAL_METHODS);
+
+    @Mock
+    protected File        fileMock;
 
     @Before
     public void setUp() {
         // create static mock Logger object
-        loggerMock = PowerMock.createNiceMock(Logger.class);
+        loggerMock = PowerMockito.mock(Logger.class);
         Whitebox.setInternalState(FileHandler.class, loggerMock);
-        // create mock File object
-        fileMock = PowerMock.createMock(File.class);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void getFileNamePattern() {
         final Pattern pattern = Pattern.compile("a");
-
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
         fileHandler.setFileNamePattern(pattern);
+        Assert.assertEquals(fileHandler.fileNamePattern, pattern);
         Assert.assertEquals(fileHandler.getFileNamePattern(), pattern);
-
-        PowerMock.verifyAll();
     }
 
     /**
@@ -65,134 +74,153 @@ public class FileHandlerTest {
      */
     @Test
     public void updateWrongProcessFileValidation() throws Exception {
-        // prepare fileMock object for testing
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
+        doReturn(false).when(fileHandler).processFileValidation(fileMock);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, "processFileValidation");
-        PowerMock.expectPrivate(fileHandler, "processFileValidation", fileMock).andReturn(false);
+        // do test
+        fileHandler.update(fileMock);
 
-        PowerMock.replayAll();
+        // expectation specification
+        verify(fileHandler, times(1)).processFileValidation(fileMock);
+        verify(fileHandler, times(0)).processFile(fileMock);
+        verify(fileMock, times(2)).getAbsolutePath();
 
-        Assert.assertFalse(fileHandler.update(fileMock));
-
-        PowerMock.verifyAll();
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void updateWrongProcessFile() throws Exception {
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
+        doReturn(true).when(fileHandler).processFileValidation(fileMock);
+        doReturn(false).when(fileHandler).processFile(fileMock);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] {
-                "processFileValidation", "processFile" });
-        PowerMock.expectPrivate(fileHandler, "processFileValidation", fileMock).andReturn(true);
-        PowerMock.expectPrivate(fileHandler, "processFile", fileMock).andReturn(false);
+        // do test
+        fileHandler.update(fileMock);
 
-        PowerMock.replayAll();
+        // expectation specification
+        verify(fileHandler, times(1)).processFileValidation(fileMock);
+        verify(fileHandler, times(1)).processFile(fileMock);
+        verify(fileMock, times(2)).getAbsolutePath();
 
-        Assert.assertFalse(fileHandler.update(fileMock));
-
-        PowerMock.verifyAll();
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void fileDoesNotExist() throws Exception {
-        final File fileMock = PowerMock.createMock(File.class);
-        EasyMock.expect(fileMock.exists()).andReturn(false);
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.exists()).thenReturn(false);
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
+        // do test
         Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
-        PowerMock.verifyAll();
+        // expectation specification
+        verify(fileMock, times(1)).exists();
+        verify(fileMock, times(1)).getAbsolutePath();
+
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void itDoesNotFile() throws Exception {
-        EasyMock.expect(fileMock.exists()).andReturn(true);
-        EasyMock.expect(fileMock.isFile()).andReturn(false);
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.exists()).thenReturn(true);
+        when(fileMock.isFile()).thenReturn(false);
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
+        // do test
         Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
-        PowerMock.verifyAll();
+        // expectation specification
+        verify(fileMock, times(1)).exists();
+        verify(fileMock, times(1)).isFile();
+        verify(fileMock, times(1)).getAbsolutePath();
+
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void fileCouldNotBeRead() throws Exception {
-        EasyMock.expect(fileMock.exists()).andReturn(true);
-        EasyMock.expect(fileMock.isFile()).andReturn(true);
-        EasyMock.expect(fileMock.canRead()).andReturn(false);
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.exists()).thenReturn(true);
+        when(fileMock.isFile()).thenReturn(true);
+        when(fileMock.canRead()).thenReturn(false);
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
+        // do test
         Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
-        PowerMock.verifyAll();
+        // expectation specification
+        verify(fileMock, times(1)).exists();
+        verify(fileMock, times(1)).isFile();
+        verify(fileMock, times(1)).canRead();
+        verify(fileMock, times(1)).getAbsolutePath();
+
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void incorrectFileName() {
-        EasyMock.expect(fileMock.exists()).andReturn(true);
-        EasyMock.expect(fileMock.isFile()).andReturn(true);
-        EasyMock.expect(fileMock.canRead()).andReturn(true);
-        EasyMock.expect(fileMock.getName()).andReturn("test.test");
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.exists()).thenReturn(true);
+        when(fileMock.isFile()).thenReturn(true);
+        when(fileMock.canRead()).thenReturn(true);
+        when(fileMock.getName()).thenReturn("test.test");
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
         // create mock Matcher object
-        final Matcher matcherMock = PowerMock.createMock(Matcher.class);
-        EasyMock.expect(matcherMock.matches()).andReturn(false);
+        final Matcher matcherMock = mock(Matcher.class);
+        when(matcherMock.matches()).thenReturn(false);
 
         // create mock Pattern object
-        final Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
-        EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
-        EasyMock.expect(fileNamePatternMock.pattern()).andReturn("a");
+        final Pattern fileNamePatternMock = mock(Pattern.class);
+        when(fileNamePatternMock.matcher("test.test")).thenReturn(matcherMock);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
+        // do test
         fileHandler.fileNamePattern = fileNamePatternMock;
         Assert.assertFalse(fileHandler.processFileValidation(fileMock));
 
-        PowerMock.verifyAll();
+        // expectation specification
+        verify(fileMock, times(1)).exists();
+        verify(fileMock, times(1)).isFile();
+        verify(fileMock, times(1)).canRead();
+        verify(fileMock, times(1)).getName();
+        verify(fileMock, times(1)).getAbsolutePath();
+
+        verifyNoMoreInteractions();
     }
 
     @Test
     public void correctFile() throws Exception {
-        EasyMock.expect(fileMock.exists()).andReturn(true);
-        EasyMock.expect(fileMock.isFile()).andReturn(true);
-        EasyMock.expect(fileMock.canRead()).andReturn(true);
-        EasyMock.expect(fileMock.getName()).andReturn("test.test");
-        EasyMock.expect(fileMock.getAbsolutePath()).andReturn(filePath);
+        // behaviour specification
+        when(fileMock.exists()).thenReturn(true);
+        when(fileMock.isFile()).thenReturn(true);
+        when(fileMock.canRead()).thenReturn(true);
+        when(fileMock.getName()).thenReturn("test.test");
+        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
         // create mock Matcher object
-        final Matcher matcherMock = PowerMock.createMock(Matcher.class);
-        EasyMock.expect(matcherMock.matches()).andReturn(true);
+        final Matcher matcherMock = mock(Matcher.class);
+        when(matcherMock.matches()).thenReturn(true);
 
         // create mock Pattern object
-        final Pattern fileNamePatternMock = PowerMock.createMock(Pattern.class);
-        EasyMock.expect(fileNamePatternMock.matcher("test.test")).andReturn(matcherMock);
+        final Pattern fileNamePatternMock = mock(Pattern.class);
+        when(fileNamePatternMock.matcher("test.test")).thenReturn(matcherMock);
 
-        final FileHandler fileHandler = PowerMock.createPartialMock(FileHandler.class, new String[] { "processFile" });
-
-        PowerMock.replayAll();
-
+        // do test
         fileHandler.fileNamePattern = fileNamePatternMock;
         Assert.assertTrue(fileHandler.processFileValidation(fileMock));
 
-        PowerMock.verifyAll();
+        // expectation specification
+        verify(fileMock, times(1)).exists();
+        verify(fileMock, times(1)).isFile();
+        verify(fileMock, times(1)).canRead();
+        verify(fileMock, times(1)).getName();
+        verify(fileMock, times(1)).getAbsolutePath();
+
+        verifyNoMoreInteractions();
     }
 
 }

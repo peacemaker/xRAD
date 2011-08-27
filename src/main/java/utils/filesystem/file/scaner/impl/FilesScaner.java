@@ -4,11 +4,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import utils.filesystem.file.event.ISetupFileEvent;
-import utils.filesystem.file.listener.ISetupFileEventListener;
 import utils.filesystem.file.scaner.IFilesScaner;
+import event.IObserver;
+import event.ISubject;
 
 /**
  * 
@@ -17,26 +18,26 @@ import utils.filesystem.file.scaner.IFilesScaner;
  * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 9 июня 2011
  */
-public class FilesScaner implements IFilesScaner, ISetupFileEvent {
+public class FilesScaner implements IFilesScaner, ISubject<File> {
 
-    private static Logger                   logger = Logger.getLogger(FilesScaner.class);
+    static Logger                   logger = LoggerFactory.getLogger(FilesScaner.class);
 
-    protected File                          sourceDirectory;
+    protected File                  sourceDirectory;
 
-    protected List<ISetupFileEventListener> listeners;
+    protected List<IObserver<File>> observers;
 
     public FilesScaner() {
-        listeners = new ArrayList<ISetupFileEventListener>();
+        observers = new ArrayList<IObserver<File>>();
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see IDirectoriesParser#setSourceDirectoryPath(java.lang.String)
      */
     @Override
     public void setSourceDirectory(final File file) {
         sourceDirectory = file;
-        logger.info(String.format("set Source : %1$s", sourceDirectory.getAbsolutePath()));
     }
 
     @Override
@@ -46,38 +47,37 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
 
     /*
      * (non-Javadoc)
+     * 
      * @see IDirectoriesParser#execute()
      */
     @Override
     public boolean execute() {
-        logger.info("-----");
-        logger.info(String.format("Start execute for file : %1$s", sourceDirectory.getAbsolutePath()));
+        logger.info("Directory : {} - start", sourceDirectory.getAbsolutePath());
         if (!sourceDirectory.exists()) {
-            logger.error(String.format("Execute (sourceDirectory.exists()) FAIL for directory : %1$s",
-                    sourceDirectory.getAbsolutePath()));
+            logger.error("The directory {} does not exist", sourceDirectory.getAbsolutePath());
 
             return false;
         }
 
         if (!sourceDirectory.isDirectory()) {
-            logger.error(String.format("Execute (sourceDirectory.isDirectory()) FAIL for directory : %1$s",
-                    sourceDirectory.getAbsolutePath()));
+            logger.error("The directory {} is not a directory", sourceDirectory.getAbsolutePath());
 
             return false;
         }
 
         if (!sourceDirectory.canRead()) {
-            logger.error(String.format("Execute (sourceDirectory.canRead()) FAIL for directory : %1$s",
-                    sourceDirectory.getAbsolutePath()));
+            logger.error("The directory {} can not be readed", sourceDirectory.getAbsolutePath());
 
             return false;
         }
 
         if (!parseDirectory(sourceDirectory)) {
-            logger.error(String.format("Parse FAIL for directory : %1$s", sourceDirectory.getAbsolutePath()));
+            logger.error("Parse FAIL for directory : {}", sourceDirectory.getAbsolutePath());
 
             return false;
         }
+
+        logger.info("end");
 
         return true;
     }
@@ -104,33 +104,40 @@ public class FilesScaner implements IFilesScaner, ISetupFileEvent {
                 continue;
             }
 
-            if (!notifyListener(item)) {
-                logger.info(String.format("File : %1$s - error", item.getAbsolutePath()));
-                result = false;
+            logger.info("File : {}", item.getAbsolutePath());
 
-                continue;
-            }
-
-            logger.info(String.format("File : %1$s - ok", item.getAbsolutePath()));
+            notifyObservers(item);
         }
 
         return result;
     }
 
     @Override
-    public void attach(final ISetupFileEventListener listener) {
-        listeners.add(listener);
+    public void attach(final IObserver<File> observer) {
+        observers.add(observer);
     }
 
     @Override
-    public boolean notifyListener(final File file) {
-        boolean result = true;
+    public void clear() {
+        observers.clear();
+    }
 
-        for (final ISetupFileEventListener observer : listeners) {
-            result = observer.update(file) && result;
+    @Override
+    public void detach(final IObserver<File> observer) {
+        observers.remove(observer);
+
+    }
+
+    @Override
+    public void notifyObservers(final File eventData) {
+        for (final IObserver<File> observer : observers) {
+            observer.update(eventData);
         }
+    }
 
-        return result;
+    @Override
+    public int size() {
+        return observers.size();
     }
 
 }

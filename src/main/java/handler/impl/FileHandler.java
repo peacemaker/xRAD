@@ -7,9 +7,10 @@ import java.io.File;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import utils.filesystem.file.listener.ISetupFileEventListener;
+import event.IObserver;
 
 /**
  * 
@@ -18,11 +19,11 @@ import utils.filesystem.file.listener.ISetupFileEventListener;
  * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 9 июня 2011
  */
-abstract public class FileHandler implements ISetupFileEventListener {
+abstract public class FileHandler implements IObserver<File> {
 
-    private static Logger logger = Logger.getLogger(FileHandler.class);
+    static Logger     logger = LoggerFactory.getLogger(FileHandler.class);
 
-    protected Pattern     fileNamePattern;
+    protected Pattern fileNamePattern;
 
     public Pattern getFileNamePattern() {
         return fileNamePattern;
@@ -33,22 +34,22 @@ abstract public class FileHandler implements ISetupFileEventListener {
     }
 
     @Override
-    public boolean update(final File file) {
+    public void update(File eventData) {
         FileHandler.logger.info("--------");
-        FileHandler.logger.info(String.format("Start update for file : %1$s", file.getAbsolutePath()));
-        if (!processFileValidation(file)) {
-            FileHandler.logger.error(String.format("Validation FAIL for file : %1$s", file.getAbsolutePath()));
+        FileHandler.logger.info(String.format("Start update for file : %1$s", eventData.getAbsolutePath()));
+        if (!processFileValidation(eventData)) {
+            FileHandler.logger.error(String.format("Validation FAIL for file : %1$s", eventData.getAbsolutePath())); // ???
 
-            return false;
+            return;
         }
 
-        if (!processFile(file)) {
-            FileHandler.logger.error(String.format("Process FAIL for file : %1$s", file.getAbsolutePath()));
+        if (!processFile(eventData)) {
+            FileHandler.logger.error(String.format("Process FAIL for file : %1$s", eventData.getAbsolutePath()));
 
-            return false;
+            return;
         }
 
-        return true;
+        return;
     }
 
     protected boolean processFileValidation(final File file) {

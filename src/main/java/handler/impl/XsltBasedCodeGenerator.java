@@ -5,14 +5,10 @@ package handler.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -38,7 +34,8 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
     protected boolean processFile(final File file) {
         logger.info("Start processFile for file : {}", file.getAbsolutePath());
         // final File output = createOutputFile(file);
-        // logger.info(String.format("Output file : %1$s", output.getAbsolutePath()));
+        // logger.info(String.format("Output file : %1$s",
+        // output.getAbsolutePath()));
         StringWriter writer = new StringWriter();
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
         try {
@@ -47,7 +44,8 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
 
             String result = writer.toString();
 
-            String outputFileName = getTemplate().getAbsolutePath() + File.pathSeparator + buildResultFilename(result);
+            String outputFileName = getDestinationDirectory().getAbsolutePath() + File.separator
+                    + buildResultFilename(result);
 
             BufferedWriter out = new BufferedWriter(new FileWriter(outputFileName));// IOException
             out.write(result);// IOException
@@ -69,7 +67,8 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
         // try {
         // // Create file
         // // FileWriter fstream = new FileWriter("out.txt");
-        // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt")); // fstream
+        // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+        // // fstream
         // out.write("Hello Java");
         // // Close the output stream
         // out.close();
@@ -82,9 +81,11 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
         // StringWriter writer = new StringWriter();
         // TransformerFactory tFactory = TransformerFactory.newInstance();
         // Transformer transformer = tFactory
-        // .newTransformer(new javax.xml.transform.stream.StreamSource("styler.xsl"));
+        // .newTransformer(new
+        // javax.xml.transform.stream.StreamSource("styler.xsl"));
         //
-        // transformer.transform(new javax.xml.transform.stream.StreamSource(reader),
+        // transformer.transform(new
+        // javax.xml.transform.stream.StreamSource(reader),
         // new javax.xml.transform.stream.StreamResult(writer));
         //
         // String result = writer.toString();

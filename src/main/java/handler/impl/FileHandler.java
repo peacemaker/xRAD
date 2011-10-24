@@ -21,9 +21,9 @@ import event.IObserver;
  */
 abstract public class FileHandler implements IObserver<File> {
 
-    static Logger     logger = LoggerFactory.getLogger(FileHandler.class);
+    static protected Logger logger = LoggerFactory.getLogger(FileHandler.class);
 
-    protected Pattern fileNamePattern;
+    protected Pattern       fileNamePattern;
 
     public Pattern getFileNamePattern() {
         return fileNamePattern;

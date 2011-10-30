@@ -32,7 +32,6 @@ public class FilesScaner implements IFilesScaner, ISubject<File> {
 
     /*
      * (non-Javadoc)
-     * 
      * @see IDirectoriesParser#setSourceDirectoryPath(java.lang.String)
      */
     @Override
@@ -47,69 +46,46 @@ public class FilesScaner implements IFilesScaner, ISubject<File> {
 
     /*
      * (non-Javadoc)
-     * 
      * @see IDirectoriesParser#execute()
      */
     @Override
     public boolean execute() {
-        logger.info("Directory : {} - start", sourceDirectory.getAbsolutePath());
-        if (!sourceDirectory.exists()) {
-            logger.error("The directory {} does not exist", sourceDirectory.getAbsolutePath());
-
-            return false;
-        }
-
-        if (!sourceDirectory.isDirectory()) {
-            logger.error("The directory {} is not a directory", sourceDirectory.getAbsolutePath());
-
-            return false;
-        }
-
-        if (!sourceDirectory.canRead()) {
-            logger.error("The directory {} can not be readed", sourceDirectory.getAbsolutePath());
-
-            return false;
-        }
-
-        if (!parseDirectory(sourceDirectory)) {
-            logger.error("Parse FAIL for directory : {}", sourceDirectory.getAbsolutePath());
-
-            return false;
-        }
-
-        logger.info("end");
-
-        return true;
+        return processItem(sourceDirectory);
     }
 
-    /**
-     * 
-     * @param File
-     *            directory
-     * @return boolean
-     */
-    protected boolean parseDirectory(final File directory) {
-        boolean result = true;
-        final File[] items = directory.listFiles();
+    protected boolean processItem(final File item) {
+        if (!item.exists()) {
+            logger.error(" FAIL (directory.exists()) : {}", item.getAbsolutePath());
 
-        for (final File item : items) {
-
-            if (!item.exists()) {
-                continue;
-            }
-
-            if (item.isDirectory()) {
-                result = parseDirectory(item) && result;
-
-                continue;
-            }
-
-            logger.info("File : {}", item.getAbsolutePath());
-
-            notifyObservers(item);
+            return false;
         }
 
-        return result;
+        if (!item.canRead()) {
+            logger.error(" FAIL (directory.canRead() : {}", item.getAbsolutePath());
+
+            return false;
+        }
+
+        boolean result = true;
+
+        if (item.isDirectory()) {
+
+            logger.debug("Handle directory : {}", item.getAbsolutePath());
+
+            final File[] subItems = item.listFiles();
+
+            for (final File subItem : subItems) {
+                result = processItem(subItem) && result;
+            }
+
+            return result;
+        }
+
+        logger.debug("Handle file : {}", item.getAbsolutePath());
+
+        notifyObservers(item);
+
+        return true;
     }
 
     @Override

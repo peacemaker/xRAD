@@ -8,7 +8,9 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.doNothing;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
+import static org.powermock.api.mockito.PowerMockito.verifyPrivate;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.File;
@@ -30,7 +32,7 @@ import event.IObserver;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FilesScaner.class)
-@SuppressStaticInitializationFor({ "utils.filesystem.file.scaner.impl.FilesScaner", "org.slf4j.LoggerFactory" })
+@SuppressStaticInitializationFor({"utils.filesystem.file.scaner.impl.FilesScaner", "org.slf4j.LoggerFactory"})
 public class FilesScanerTest {
 
     final String     directoryPath = "/path/to/source/dir";
@@ -52,6 +54,7 @@ public class FilesScanerTest {
         final File fileMock = mock(File.class);
 
         when(fileMock.exists()).thenReturn(true);
+        when(fileMock.canRead()).thenReturn(true);
         when(fileMock.isDirectory()).thenReturn(false);
         when(fileMock.getAbsolutePath()).thenReturn(path);
 
@@ -60,6 +63,7 @@ public class FilesScanerTest {
 
     protected void verifyFileMock(final File file) {
         verify(file, times(1)).exists();
+        verify(file, times(1)).canRead();
         verify(file, times(1)).isDirectory();
         verify(file, times(1)).getAbsolutePath();
     }
@@ -68,6 +72,7 @@ public class FilesScanerTest {
         final File directoryMock = mock(File.class);
 
         when(directoryMock.exists()).thenReturn(true);
+        when(directoryMock.canRead()).thenReturn(true);
         when(directoryMock.isDirectory()).thenReturn(true);
         when(directoryMock.listFiles()).thenReturn(files);
 
@@ -76,6 +81,7 @@ public class FilesScanerTest {
 
     protected void verifyDirectoryMock(final File directoryMock) {
         verify(directoryMock, times(1)).exists();
+        verify(directoryMock, times(1)).canRead();
         verify(directoryMock, times(1)).isDirectory();
         verify(directoryMock, times(1)).listFiles();
     }
@@ -133,9 +139,8 @@ public class FilesScanerTest {
     @Test
     public void testExecuteNotExistDirectory() {
         // behaviour specification
-        doReturn(directoryPath).when(directoryMock).getAbsolutePath(); // update
         doReturn(false).when(directoryMock).exists();
-        doReturn(directoryPath).when(directoryMock).getAbsolutePath(); // error
+        doReturn(directoryPath).when(directoryMock).getAbsolutePath();
 
         // do test
         final FilesScaner object = new FilesScaner();
@@ -144,8 +149,29 @@ public class FilesScanerTest {
         assertFalse(object.execute());
 
         // expectation specification
-        verify(directoryMock, times(2)).getAbsolutePath();
+        verify(directoryMock, times(1)).getAbsolutePath();
         verify(directoryMock, times(1)).exists();
+
+        verifyNoMoreInteractions(directoryMock);
+    }
+
+    @Test
+    public void testExecuteCanNotRead() {
+        // behaviour specification
+        when(directoryMock.exists()).thenReturn(true);
+        when(directoryMock.canRead()).thenReturn(false);
+        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath);
+
+        // do test
+        final FilesScaner object = new FilesScaner();
+        object.sourceDirectory = directoryMock;
+
+        assertFalse(object.execute());
+
+        // expectation specification
+        verify(directoryMock, times(1)).getAbsolutePath();
+        verify(directoryMock, times(1)).exists();
+        verify(directoryMock, times(1)).canRead();
 
         verifyNoMoreInteractions(directoryMock);
     }
@@ -159,45 +185,22 @@ public class FilesScanerTest {
     @Test
     public void testExecuteNotDirectory() {
         // behaviour specification
-        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath); // update
         when(directoryMock.exists()).thenReturn(true);
+        when(directoryMock.canRead()).thenReturn(true);
         when(directoryMock.isDirectory()).thenReturn(false);
-        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath); // error
+        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath);
 
         // do test
         final FilesScaner object = new FilesScaner();
         object.sourceDirectory = directoryMock;
 
-        assertFalse(object.execute());
+        assertTrue(object.execute());
 
         // expectation specification
-        verify(directoryMock, times(2)).getAbsolutePath();
+        verify(directoryMock, times(1)).getAbsolutePath();
         verify(directoryMock, times(1)).exists();
-        verify(directoryMock, times(1)).isDirectory();
-
-        verifyNoMoreInteractions(directoryMock);
-    }
-
-    @Test
-    public void testExecuteCanNotRead() {
-        // behaviour specification
-        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath); // update
-        when(directoryMock.exists()).thenReturn(true);
-        when(directoryMock.isDirectory()).thenReturn(true);
-        when(directoryMock.canRead()).thenReturn(false);
-        when(directoryMock.getAbsolutePath()).thenReturn(directoryPath); // error
-
-        // do test
-        final FilesScaner object = new FilesScaner();
-        object.sourceDirectory = directoryMock;
-
-        assertFalse(object.execute());
-
-        // expectation specification
-        verify(directoryMock, times(2)).getAbsolutePath();
-        verify(directoryMock, times(1)).exists();
-        verify(directoryMock, times(1)).isDirectory();
         verify(directoryMock, times(1)).canRead();
+        verify(directoryMock, times(1)).isDirectory();
 
         verifyNoMoreInteractions(directoryMock);
     }
@@ -216,20 +219,20 @@ public class FilesScanerTest {
         // behaviour specification
         final File file01 = createFileMock("folder0A/file01.xml");
         final File file02 = createFileMock("folder0A/file02.xml");
-        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] { file01, file02 });
+        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] {file01, file02});
 
-        final FilesScaner object = PowerMockito.spy(new FilesScaner());
+        final FilesScaner object = spy(new FilesScaner());
         // behaviour specification
-        PowerMockito.doNothing().when(object, "notifyObservers", file01);
-        PowerMockito.doNothing().when(object, "notifyObservers", file02);
+        doNothing().when(object, "notifyObservers", file01);
+        doNothing().when(object, "notifyObservers", file02);
 
         // do test
         object.sourceDirectory = sourceDirectoryMock;
         assertTrue(object.execute());
 
         // expectation specification
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
 
         // expectation specification
         verifySourceDirectoryMock(sourceDirectoryMock);
@@ -254,19 +257,19 @@ public class FilesScanerTest {
         // behaviour specification
         final File file01 = createFileMock("folder0A/subfolder01/file01.xml");
         final File file02 = createFileMock("folder0A/subfolder01/file02.xml");
-        final File subfolder01 = createDirectoryMock(new File[] { file01, file02 });
-        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] { subfolder01 });
+        final File subfolder01 = createDirectoryMock(new File[] {file01, file02});
+        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] {subfolder01});
 
-        final FilesScaner object = PowerMockito.spy(new FilesScaner());
+        final FilesScaner object = spy(new FilesScaner());
         // behaviour specification
-        PowerMockito.doNothing().when(object, "notifyObservers", file01);
-        PowerMockito.doNothing().when(object, "notifyObservers", file02);
+        doNothing().when(object, "notifyObservers", file01);
+        doNothing().when(object, "notifyObservers", file02);
 
         object.sourceDirectory = sourceDirectoryMock;
         assertTrue(object.execute());
 
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
 
         // expectation specification
         verifySourceDirectoryMock(sourceDirectoryMock);
@@ -299,28 +302,28 @@ public class FilesScanerTest {
         // behaviour specification
         final File file01 = createFileMock("folder0A/subfolder01/file01.xml");
         final File file02 = createFileMock("folder0A/subfolder01/file02.xml");
-        final File subfolder01 = createDirectoryMock(new File[] { file01, file02 });
+        final File subfolder01 = createDirectoryMock(new File[] {file01, file02});
         final File subfolder02 = createDirectoryMock(new File[] {});
         final File file03 = createFileMock("folder0A/subfolder03/file03.xml");
-        final File subfolder03 = createDirectoryMock(new File[] { file03 });
+        final File subfolder03 = createDirectoryMock(new File[] {file03});
         final File file04 = createFileMock("folder0A/file04.xml");
-        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] { subfolder01, subfolder02, subfolder03,
-                file04 });
+        final File sourceDirectoryMock = createSourceDirectoryMock(new File[] {subfolder01, subfolder02, subfolder03,
+                file04});
 
         final FilesScaner object = PowerMockito.spy(new FilesScaner());
         // behaviour specification
-        PowerMockito.doNothing().when(object, "notifyObservers", file01);
-        PowerMockito.doNothing().when(object, "notifyObservers", file02);
-        PowerMockito.doNothing().when(object, "notifyObservers", file03);
-        PowerMockito.doNothing().when(object, "notifyObservers", file04);
+        doNothing().when(object, "notifyObservers", file01);
+        doNothing().when(object, "notifyObservers", file02);
+        doNothing().when(object, "notifyObservers", file03);
+        doNothing().when(object, "notifyObservers", file04);
 
         object.sourceDirectory = sourceDirectoryMock;
         assertTrue(object.execute());
 
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file03);
-        PowerMockito.verifyPrivate(object, times(1)).invoke("notifyObservers", file04);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file01);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file02);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file03);
+        verifyPrivate(object, times(1)).invoke("notifyObservers", file04);
 
         // expectation specification
         verifySourceDirectoryMock(sourceDirectoryMock);
@@ -365,9 +368,6 @@ public class FilesScanerTest {
         final IObserver<File> listener02 = mock(IObserver.class);
         // behaviour specification
         doNothing().when(listener02).update(file);
-        // doThrow(new FileEventException()).when(listener02).update(file);
-        // listener02.update(file);
-        // whenLastCall().andThrow(new FileEventException());
 
         final IObserver<File> listener03 = mock(IObserver.class);
         // behaviour specification

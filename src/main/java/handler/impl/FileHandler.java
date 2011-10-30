@@ -35,41 +35,36 @@ abstract public class FileHandler implements IObserver<File> {
 
     @Override
     public void update(File eventData) {
-        FileHandler.logger.info("--------");
-        FileHandler.logger.info(String.format("Start update for file : %1$s", eventData.getAbsolutePath()));
-        if (!processFileValidation(eventData)) {
-            FileHandler.logger.error(String.format("Validation FAIL for file : %1$s", eventData.getAbsolutePath())); // ???
+        if (eventData == null) {
+            logger.debug("FAIL (file == null)");
 
             return;
         }
 
-        if (!processFile(eventData)) {
-            FileHandler.logger.error(String.format("Process FAIL for file : %1$s", eventData.getAbsolutePath()));
+        if (!processFileValidation(eventData) || !processFile(eventData)) {
+            logger.info("skipped : {}", eventData.getAbsolutePath());
 
             return;
         }
 
-        return;
+        logger.info("handled : {}", eventData.getAbsolutePath());
     }
 
     protected boolean processFileValidation(final File file) {
         if (!file.exists()) {
-            FileHandler.logger.error(String.format("Validation (file.exists()) FAIL for file : %1$s",
-                file.getAbsolutePath()));
+            logger.debug("FAIL (file.exists()) : {}", file.getAbsolutePath());
 
             return false;
         }
 
         if (!file.isFile()) {
-            FileHandler.logger.error(String.format("Validation (file.isFile()) FAIL for file : %1$s",
-                file.getAbsolutePath()));
+            logger.debug("FAIL (file.isFile()) : {}", file.getAbsolutePath());
 
             return false;
         }
 
         if (!file.canRead()) {
-            FileHandler.logger.error(String.format("Validation (file.canRead()) FAIL for file : %1$s",
-                file.getAbsolutePath()));
+            logger.debug("FAIL (file.canRead()) : {}", file.getAbsolutePath());
 
             return false;
         }
@@ -78,17 +73,14 @@ abstract public class FileHandler implements IObserver<File> {
 
         final Matcher matcher = fileNamePattern.matcher(filename);
         if (!matcher.matches()) {
-            FileHandler.logger.info(String.format("Validation (file name %2$s) FAIL for file : %1$s",
-                file.getAbsolutePath(), fileNamePattern.pattern()));
+            logger.debug("FAIL (matcher.matches({})) : {}", fileNamePattern.pattern(), file.getAbsolutePath());
 
             return false;
         }
 
-        FileHandler.logger.info(String.format("Validation OK for file : %1$s", file.getAbsolutePath()));
-
         return true;
     }
 
-    abstract protected boolean processFile(File file);
+    abstract protected boolean processFile(final File file);
 
 }

@@ -37,7 +37,7 @@ import org.slf4j.Logger;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FileHandler.class)
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
+@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class FileHandlerTest {
 
     final String          filePath    = "/path/to/file";
@@ -65,6 +65,18 @@ public class FileHandlerTest {
         Assert.assertEquals(fileHandler.getFileNamePattern(), pattern);
     }
 
+    @Test
+    public void updateWrongFile() {
+        // do test
+        fileHandler.update(null);
+
+        // expectation specification
+        verify(fileHandler, times(0)).processFileValidation(fileMock);
+        verify(fileHandler, times(0)).processFile(fileMock);
+
+        verifyNoMoreInteractions();
+    }
+
     /**
      * 
      * @throws Exception
@@ -81,7 +93,7 @@ public class FileHandlerTest {
         // expectation specification
         verify(fileHandler, times(1)).processFileValidation(fileMock);
         verify(fileHandler, times(0)).processFile(fileMock);
-        verify(fileMock, times(2)).getAbsolutePath();
+        verify(fileMock, times(1)).getAbsolutePath();
 
         verifyNoMoreInteractions();
     }
@@ -99,7 +111,7 @@ public class FileHandlerTest {
         // expectation specification
         verify(fileHandler, times(1)).processFileValidation(fileMock);
         verify(fileHandler, times(1)).processFile(fileMock);
-        verify(fileMock, times(2)).getAbsolutePath();
+        verify(fileMock, times(1)).getAbsolutePath();
 
         verifyNoMoreInteractions();
     }
@@ -196,7 +208,6 @@ public class FileHandlerTest {
         when(fileMock.isFile()).thenReturn(true);
         when(fileMock.canRead()).thenReturn(true);
         when(fileMock.getName()).thenReturn("test.test");
-        when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
         // create mock Matcher object
         final Matcher matcherMock = mock(Matcher.class);
@@ -215,7 +226,6 @@ public class FileHandlerTest {
         verify(fileMock, times(1)).isFile();
         verify(fileMock, times(1)).canRead();
         verify(fileMock, times(1)).getName();
-        verify(fileMock, times(1)).getAbsolutePath();
 
         verifyNoMoreInteractions();
     }

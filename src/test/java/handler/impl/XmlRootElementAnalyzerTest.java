@@ -64,7 +64,7 @@ public class XmlRootElementAnalyzerTest {
     @Test
     public void testProcessXml() {
         Element elementMock = mock(Element.class);
-        when(elementMock.getNodeName()).thenReturn("root_a").thenReturn("root_b").thenReturn("root_c")
+        when(elementMock.getNodeName()).thenReturn("root_c").thenReturn("root_b").thenReturn("root_a")
                 .thenReturn("root_c");
 
         Document documentMock = mock(Document.class);

@@ -45,16 +45,13 @@ import org.xml.sax.SAXException;
  * @since 12 июня 2011
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(XmlFileHandler.class)
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler",
-        "handler.impl.XmlFileHandler", "org.slf4j.LoggerFactory" })
+@PrepareForTest({XmlFileHandler.class, DocumentBuilderFactory.class})
+@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class XmlFileHandlerTest {
 
     protected Logger         loggerMock;
 
-    protected XmlFileHandler xmlFileHandler = Mockito.mock(
-                                                    XmlFileHandler.class,
-                                                    Mockito.CALLS_REAL_METHODS);
+    protected XmlFileHandler xmlFileHandler = Mockito.mock(XmlFileHandler.class, Mockito.CALLS_REAL_METHODS);
 
     @Mock
     protected File           fileMock;
@@ -68,12 +65,10 @@ public class XmlFileHandlerTest {
     }
 
     @Test
-    @PrepareForTest(DocumentBuilderFactory.class)
     public void processFileWithFactoryConfigurationError() {
         // create mock for TransformerFactory object
         mockStatic(DocumentBuilderFactory.class);
-        when(DocumentBuilderFactory.newInstance()).thenThrow(
-                new FactoryConfigurationError());
+        when(DocumentBuilderFactory.newInstance()).thenThrow(new FactoryConfigurationError());
 
         // do test
         assertFalse(xmlFileHandler.processFile(fileMock));
@@ -86,43 +81,34 @@ public class XmlFileHandlerTest {
     }
 
     @Test
-    @PrepareForTest(DocumentBuilderFactory.class)
-    public void processFileWithParserConfigurationException()
-            throws ParserConfigurationException {
+    public void processFileWithParserConfigurationException() throws ParserConfigurationException {
         // create mock for TransformerFactory object
         DocumentBuilderFactory documentBuilderFactoryMock = mock(DocumentBuilderFactory.class);
-        when(documentBuilderFactoryMock.newDocumentBuilder()).thenThrow(
-                new ParserConfigurationException());
+        when(documentBuilderFactoryMock.newDocumentBuilder()).thenThrow(new ParserConfigurationException());
 
         mockStatic(DocumentBuilderFactory.class);
-        when(DocumentBuilderFactory.newInstance()).thenReturn(
-                documentBuilderFactoryMock);
+        when(DocumentBuilderFactory.newInstance()).thenReturn(documentBuilderFactoryMock);
 
         // do test
         assertFalse(xmlFileHandler.processFile(fileMock));
 
         // expectation specification
         verify(xmlFileHandler, times(0)).processXml(any(Document.class));
-        // verify(fileMock, times(0)).getAbsolutePath();
 
         verifyNoMoreInteractions();
     }
 
     @Test
-    @PrepareForTest(DocumentBuilderFactory.class)
-    public void processFileWithIOException() throws SAXException, IOException,
-            ParserConfigurationException {
+    public void processFileWithIOException() throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilder documentBuilderMock = mock(DocumentBuilder.class);
         when(documentBuilderMock.parse(fileMock)).thenThrow(new IOException());
 
         // create mock for TransformerFactory object
         DocumentBuilderFactory documentBuilderFactoryMock = mock(DocumentBuilderFactory.class);
-        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(
-                documentBuilderMock);
+        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(documentBuilderMock);
 
         mockStatic(DocumentBuilderFactory.class);
-        when(DocumentBuilderFactory.newInstance()).thenReturn(
-                documentBuilderFactoryMock);
+        when(DocumentBuilderFactory.newInstance()).thenReturn(documentBuilderFactoryMock);
 
         // do test
         assertFalse(xmlFileHandler.processFile(fileMock));
@@ -135,20 +121,16 @@ public class XmlFileHandlerTest {
     }
 
     @Test
-    @PrepareForTest(DocumentBuilderFactory.class)
-    public void processFileWithSAXException() throws SAXException, IOException,
-            ParserConfigurationException {
+    public void processFileWithSAXException() throws SAXException, IOException, ParserConfigurationException {
         DocumentBuilder documentBuilderMock = mock(DocumentBuilder.class);
         when(documentBuilderMock.parse(fileMock)).thenThrow(new SAXException());
 
         // create mock for TransformerFactory object
         DocumentBuilderFactory documentBuilderFactoryMock = mock(DocumentBuilderFactory.class);
-        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(
-                documentBuilderMock);
+        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(documentBuilderMock);
 
         mockStatic(DocumentBuilderFactory.class);
-        when(DocumentBuilderFactory.newInstance()).thenReturn(
-                documentBuilderFactoryMock);
+        when(DocumentBuilderFactory.newInstance()).thenReturn(documentBuilderFactoryMock);
 
         // do test
         assertFalse(xmlFileHandler.processFile(fileMock));
@@ -161,9 +143,29 @@ public class XmlFileHandlerTest {
     }
 
     @Test
-    @PrepareForTest(DocumentBuilderFactory.class)
-    public void processFile() throws SAXException, IOException,
+    public void processFileWithIllegalArgumentException() throws SAXException, IOException,
             ParserConfigurationException {
+        DocumentBuilder documentBuilderMock = mock(DocumentBuilder.class);
+        when(documentBuilderMock.parse(fileMock)).thenThrow(new IllegalArgumentException());
+
+        // create mock for TransformerFactory object
+        DocumentBuilderFactory documentBuilderFactoryMock = mock(DocumentBuilderFactory.class);
+        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(documentBuilderMock);
+
+        mockStatic(DocumentBuilderFactory.class);
+        when(DocumentBuilderFactory.newInstance()).thenReturn(documentBuilderFactoryMock);
+
+        // do test
+        assertFalse(xmlFileHandler.processFile(fileMock));
+
+        // expectation specification
+        verify(xmlFileHandler, times(0)).processXml(any(Document.class));
+
+        verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void processFile() throws SAXException, IOException, ParserConfigurationException {
         Element elementMock = mock(Element.class);
         doNothing().when(elementMock).normalize();
 
@@ -175,12 +177,10 @@ public class XmlFileHandlerTest {
 
         // create mock for TransformerFactory object
         DocumentBuilderFactory documentBuilderFactoryMock = mock(DocumentBuilderFactory.class);
-        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(
-                documentBuilderMock);
+        when(documentBuilderFactoryMock.newDocumentBuilder()).thenReturn(documentBuilderMock);
 
         mockStatic(DocumentBuilderFactory.class);
-        when(DocumentBuilderFactory.newInstance()).thenReturn(
-                documentBuilderFactoryMock);
+        when(DocumentBuilderFactory.newInstance()).thenReturn(documentBuilderFactoryMock);
 
         doReturn(false).when(xmlFileHandler).processXml(documentMock);
 

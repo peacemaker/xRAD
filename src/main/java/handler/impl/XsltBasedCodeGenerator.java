@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package handler.impl;
 
@@ -13,11 +13,11 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * 
  * 
  * @author Denys Solyanyk <peacemaker@ukr.net>
  * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
@@ -27,100 +27,65 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
 
     /*
      * (non-Javadoc)
-     * 
      * @see handler.impl.FileHandler#processFile(java.io.File)
      */
     @Override
     protected boolean processFile(final File file) {
-        logger.info("Start processFile for file : {}", file.getAbsolutePath());
-        // final File output = createOutputFile(file);
-        // logger.info(String.format("Output file : %1$s",
-        // output.getAbsolutePath()));
-        StringWriter writer = new StringWriter();
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        if (file == null) {
+            logger.debug("FAIL (file == null)");
+
+            return false;
+        }
+
         try {
-            final Transformer transformer = transformerFactory.newTransformer(new StreamSource(template));
+            final TransformerFactory transformerFactory = TransformerFactory.newInstance(); // TransformerFactoryConfigurationError
+            final Transformer transformer = transformerFactory.newTransformer(new StreamSource(template)); // TransformerConfigurationException
+            final StringWriter writer = new StringWriter();
             transformer.transform(new StreamSource(file), new StreamResult(writer));
 
-            String result = writer.toString();
+            final String result = writer.toString();
 
-            String outputFileName = getDestinationDirectory().getAbsolutePath() + File.separator
-                    + buildResultFilename(result);
+            final String outputFileName = buildFullFileName(result);
 
-            BufferedWriter out = new BufferedWriter(new FileWriter(outputFileName));// IOException
+            if (outputFileName == null) {
+                // logger.debug("Can not get file name from {} : ", result);
+
+                return false;
+            }
+
+            final BufferedWriter out = new BufferedWriter(new FileWriter(outputFileName));// IOException
             out.write(result);// IOException
             out.close();// IOException
 
             return true;
-            // // transformer.transform(new StreamSource("howto.xml"), new
-            // // StreamResult(new FileOutputStream("howto.html")));
-        } catch (TransformerConfigurationException e) {
-            // e.printStackTrace();
-        } catch (TransformerException e) {
-            // e.printStackTrace();
-        } catch (IOException e) {
-            // e.printStackTrace();
+        } catch (final TransformerFactoryConfigurationError e) {
+            logger.error("The implementation is not available or cannot be instantiated");
+            logger.error(e.fillInStackTrace().toString());
+        } catch (final TransformerConfigurationException e) {
+            logger.error("there are errors when parsing the Source or it is not possible to create a Transformer instance");
+            logger.error(e.fillInStackTrace().toString());
+        } catch (final TransformerException e) {
+            logger.error("There are errors when parsing the Source or it is not possible to create a Transformer instance");
+            logger.error(e.fillInStackTrace().toString());
+        } catch (final IOException e) {
+            logger.error("Can not write to file");
+            logger.error(e.fillInStackTrace().toString());
         }
 
         return false;
-
-        // try {
-        // // Create file
-        // // FileWriter fstream = new FileWriter("out.txt");
-        // BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
-        // // fstream
-        // out.write("Hello Java");
-        // // Close the output stream
-        // out.close();
-        // } catch (Exception e) {// Catch exception if any
-        // System.err.println("Error: " + e.getMessage());
-        // }
-
-        // try {
-        // StringReader reader = new StringReader("<xml>blabla</xml>");
-        // StringWriter writer = new StringWriter();
-        // TransformerFactory tFactory = TransformerFactory.newInstance();
-        // Transformer transformer = tFactory
-        // .newTransformer(new
-        // javax.xml.transform.stream.StreamSource("styler.xsl"));
-        //
-        // transformer.transform(new
-        // javax.xml.transform.stream.StreamSource(reader),
-        // new javax.xml.transform.stream.StreamResult(writer));
-        //
-        // String result = writer.toString();
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // }
-
-        // try {
-        // // Here we'll write our data into a file called
-        // // sample.txt, this is the output.
-        // File file2 = new File("sample.txt");
-        // // We'll write the string below into the file
-        // String data = "Learning Java Programming";
-        //
-        // // To write a file called the writeStringToFile
-        // // method which require you to pass the file and
-        // // the data to be written.
-        // FileUtils.writeStringToFile(file2, data);
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
-
-        // System.out.println("InterfaceRequestCodeGenerator.execute()");
-        // System.out.println(file.getAbsolutePath());
-
     }
 
-    protected abstract String buildResultFilename(String result);
+    protected String buildFullFileName(String result) {
+        final String fileName = buildFileName(result);
+        if (fileName == null) {
+            // logger.debug("Can not get file name from {} : ", result);
 
-    // protected Source createSource(File file) {
-    // return new StreamSource(file);
-    // }
+            return null;
+        }
 
-    // protected Result createResult(File file) throws FileNotFoundException {
-    // return new StreamResult(new FileOutputStream(file));
-    // }
+        return getDestinationDirectory().getAbsolutePath() + File.separator + fileName;
+    }
+
+    protected abstract String buildFileName(String result);
 
 }

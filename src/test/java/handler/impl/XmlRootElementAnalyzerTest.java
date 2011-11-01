@@ -46,7 +46,7 @@ public class XmlRootElementAnalyzerTest {
     }
 
     /**
-     * Test method for {@link handler.impl.XmlRootElementAnalyzer#getRoots()}.
+     * Test method for {@link handler.impl.XmlRootElementAnalyzer#getRootElements()}.
      */
     @Test
     public void testGetRoots() {
@@ -55,7 +55,7 @@ public class XmlRootElementAnalyzerTest {
 
         xmlRootElementAnalyzer.roots = roots;
 
-        assertEquals(xmlRootElementAnalyzer.getRoots(), roots);
+        assertEquals(xmlRootElementAnalyzer.getRootElements(), roots);
     }
 
     /**

@@ -10,7 +10,7 @@ public class XmlRootElementAnalyzer extends XmlFileHandler {
 
     protected Set<String> roots = new TreeSet<String>();
 
-    public Set<String> getRoots() {
+    public Set<String> getRootElements() {
         return roots;
     }
 

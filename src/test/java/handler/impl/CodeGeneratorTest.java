@@ -29,22 +29,21 @@ import org.slf4j.Logger;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CodeGenerator.class)
-@SuppressStaticInitializationFor({ "handler.impl.CodeGenerator", "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
+@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
 public class CodeGeneratorTest {
 
     final String            destinationPath = "/path/to/destination/folder";
 
+    @Mock
     protected Logger        loggerMock;
-
-    protected CodeGenerator codeGenerator   = Mockito.mock(CodeGenerator.class, Mockito.CALLS_REAL_METHODS);
 
     @Mock
     protected File          fileMock;
 
+    protected CodeGenerator codeGenerator   = mock(CodeGenerator.class, Mockito.CALLS_REAL_METHODS);
+
     @Before
     public void setUp() {
-        // create static mock Logger object
-        loggerMock = mock(Logger.class);
         Whitebox.setInternalState(FileHandler.class, loggerMock);
         MockitoAnnotations.initMocks(this);
     }

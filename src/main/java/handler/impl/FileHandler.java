@@ -52,27 +52,30 @@ abstract public class FileHandler implements IObserver<File> {
 
     protected boolean processFileValidation(final File file) {
         if (!file.exists()) {
-            logger.debug("FAIL (file.exists()) : {}", file.getAbsolutePath());
+            logger.debug("FAIL (file.exists() == false) : {}", file.getAbsolutePath());
 
             return false;
         }
 
         if (!file.isFile()) {
-            logger.debug("FAIL (file.isFile()) : {}", file.getAbsolutePath());
+            logger.debug("FAIL (file.isFile() == false) : {}", file.getAbsolutePath());
 
             return false;
         }
 
         if (!file.canRead()) {
-            logger.debug("FAIL (file.canRead()) : {}", file.getAbsolutePath());
+            logger.debug("FAIL (file.canRead() == false) : {}", file.getAbsolutePath());
 
             return false;
         }
 
-        final String filename = file.getName();
+        if (fileNamePattern == null) {
+            logger.debug("FAIL (fileNamePattern == null)");
 
-        final Matcher matcher = fileNamePattern.matcher(filename);
-        if (!matcher.matches()) {
+            return false;
+        }
+
+        if (!fileNamePattern.matcher(file.getName()).matches()) {
             logger.debug("FAIL (matcher.matches({})) : {}", fileNamePattern.pattern(), file.getAbsolutePath());
 
             return false;

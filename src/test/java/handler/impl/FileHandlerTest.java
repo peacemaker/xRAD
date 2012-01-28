@@ -37,22 +37,21 @@ import org.slf4j.Logger;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FileHandler.class)
-@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
+@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
 public class FileHandlerTest {
 
     final String          filePath    = "/path/to/file";
 
+    @Mock
     protected Logger      loggerMock;
-
-    protected FileHandler fileHandler = Mockito.mock(FileHandler.class, Mockito.CALLS_REAL_METHODS);
 
     @Mock
     protected File        fileMock;
 
+    protected FileHandler fileHandler = PowerMockito.mock(FileHandler.class, Mockito.CALLS_REAL_METHODS);
+
     @Before
     public void setUp() {
-        // create static mock Logger object
-        loggerMock = PowerMockito.mock(Logger.class);
         Whitebox.setInternalState(FileHandler.class, loggerMock);
         MockitoAnnotations.initMocks(this);
     }
@@ -60,7 +59,10 @@ public class FileHandlerTest {
     @Test
     public void getFileNamePattern() {
         final Pattern pattern = Pattern.compile("a");
+
+        // do test
         fileHandler.setFileNamePattern(pattern);
+
         Assert.assertEquals(fileHandler.fileNamePattern, pattern);
         Assert.assertEquals(fileHandler.getFileNamePattern(), pattern);
     }

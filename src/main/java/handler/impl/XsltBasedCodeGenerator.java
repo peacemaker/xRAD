@@ -4,6 +4,7 @@
 package handler.impl;
 
 import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
 
     /*
      * (non-Javadoc)
+     * 
      * @see handler.impl.FileHandler#processFile(java.io.File)
      */
     @Override
@@ -38,8 +40,7 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
         }
 
         try {
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance(); // TransformerFactoryConfigurationError
-            final Transformer transformer = transformerFactory.newTransformer(new StreamSource(template)); // TransformerConfigurationException
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(template));
             final StringWriter writer = new StringWriter();
             transformer.transform(new StreamSource(file), new StreamResult(writer));
 
@@ -48,10 +49,10 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
             final String outputFileName = buildFullFileName(result);
 
             if (outputFileName == null) {
-                // logger.debug("Can not get file name from {} : ", result);
-
                 return false;
             }
+
+            logger.info("File name : {}", outputFileName);
 
             final BufferedWriter out = new BufferedWriter(new FileWriter(outputFileName));// IOException
             out.write(result);// IOException
@@ -62,10 +63,10 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
             logger.error("The implementation is not available or cannot be instantiated");
             logger.error(e.fillInStackTrace().toString());
         } catch (final TransformerConfigurationException e) {
-            logger.error("there are errors when parsing the Source or it is not possible to create a Transformer instance");
+            logger.error("There are errors when parsing the Source or it is not possible to create a Transformer instance");
             logger.error(e.fillInStackTrace().toString());
         } catch (final TransformerException e) {
-            logger.error("There are errors when parsing the Source or it is not possible to create a Transformer instance");
+            logger.error("If an unrecoverable error occurs during the course of the transformation");
             logger.error(e.fillInStackTrace().toString());
         } catch (final IOException e) {
             logger.error("Can not write to file");
@@ -78,7 +79,7 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
     protected String buildFullFileName(String result) {
         final String fileName = buildFileName(result);
         if (fileName == null) {
-            // logger.debug("Can not get file name from {} : ", result);
+            logger.debug("Can not get file name from {} : ", result);
 
             return null;
         }

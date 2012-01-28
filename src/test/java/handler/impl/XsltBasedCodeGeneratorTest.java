@@ -48,28 +48,29 @@ import org.slf4j.Logger;
  * @since 9 июня 2011
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(XsltBasedCodeGenerator.class)
-@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
+@PrepareForTest({ XsltBasedCodeGenerator.class, TransformerFactory.class })
+@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
 public class XsltBasedCodeGeneratorTest {
 
-    final String     filePath = "/path/to/file";
-    final String     fileName = "test.txt";
-
-    protected Logger loggerMock;
+    final String                     filePath               = "/path/to/file";
+    final String                     fileName               = "test.txt";
 
     @Mock
-    protected File   fileMock;
+    protected Logger                 loggerMock;
+
+    @Mock
+    protected File                   fileMock;
+
+    protected XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
+                                                                    Mockito.CALLS_REAL_METHODS);
 
     @Before
     public void setUp() {
-        // create static mock Logger object
-        loggerMock = mock(Logger.class);
         Whitebox.setInternalState(FileHandler.class, loggerMock);
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
     public void processFileWithNullParameter() throws TransformerConfigurationException {
         // behaviour specification
         // mock static
@@ -77,9 +78,6 @@ public class XsltBasedCodeGeneratorTest {
         // Tell Powermock to not to invoke constructor
         MemberModifier.suppress(MemberMatcher.constructor(TransformerFactory.class));
         when(TransformerFactory.newInstance()).thenReturn(null);
-
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
 
         // do test
         assertFalse(xsltBasedCodeGenerator.processFile(null));
@@ -92,7 +90,6 @@ public class XsltBasedCodeGeneratorTest {
     }
 
     @Test
-    @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
     public void processFileWithTransformerFactoryConfigurationError() throws Exception {
         // mock static
         mockStatic(TransformerFactory.class);
@@ -100,8 +97,6 @@ public class XsltBasedCodeGeneratorTest {
         MemberModifier.suppress(MemberMatcher.constructor(TransformerFactory.class));
         when(TransformerFactory.newInstance()).thenThrow(new TransformerFactoryConfigurationError());
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         whenNew(StreamSource.class).withParameterTypes(File.class).withArguments(any()).thenReturn(null);
 
         // do test
@@ -115,7 +110,6 @@ public class XsltBasedCodeGeneratorTest {
     }
 
     @Test
-    @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
     public void processFileWithTransformerConfigurationException() throws Exception {
         // behaviour specification
         final TransformerFactory mockTransformerFactory = mock(TransformerFactory.class);
@@ -127,8 +121,6 @@ public class XsltBasedCodeGeneratorTest {
         MemberModifier.suppress(MemberMatcher.constructor(TransformerFactory.class));
         when(TransformerFactory.newInstance()).thenReturn(mockTransformerFactory);
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         whenNew(StreamSource.class).withParameterTypes(File.class).withArguments(any()).thenReturn(null);
 
         // do test
@@ -146,7 +138,6 @@ public class XsltBasedCodeGeneratorTest {
     }
 
     @Test
-    @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
     public void processFileWithTransformerException() throws Exception {
         // behaviour specification
         final Transformer mockTransformer = mock(Transformer.class, Mockito.CALLS_REAL_METHODS);
@@ -163,8 +154,6 @@ public class XsltBasedCodeGeneratorTest {
         MemberModifier.suppress(MemberMatcher.constructor(TransformerFactory.class));
         when(TransformerFactory.newInstance()).thenReturn(mockTransformerFactory);
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         whenNew(StreamSource.class).withParameterTypes(File.class).withArguments(any()).thenReturn(null);
         whenNew(StreamResult.class).withParameterTypes(File.class).withArguments(any()).thenReturn(null);
 
@@ -184,7 +173,6 @@ public class XsltBasedCodeGeneratorTest {
     }
 
     @Test
-    @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
     public void processFileWithFileNameError() throws Exception {
         // behaviour specification
         final Transformer mockTransformer = mock(Transformer.class, Mockito.CALLS_REAL_METHODS);
@@ -200,8 +188,6 @@ public class XsltBasedCodeGeneratorTest {
         MemberModifier.suppress(MemberMatcher.constructor(TransformerFactory.class));
         when(TransformerFactory.newInstance()).thenReturn(mockTransformerFactory);
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         doReturn(null).when(xsltBasedCodeGenerator).buildFullFileName(any(String.class));
 
         whenNew(StreamSource.class).withParameterTypes(File.class).withArguments(any()).thenReturn(null);
@@ -229,8 +215,6 @@ public class XsltBasedCodeGeneratorTest {
         // behaviour specification
         when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         doReturn(null).when(xsltBasedCodeGenerator).buildFileName(null);
 
         xsltBasedCodeGenerator.destinationDirectory = fileMock;
@@ -249,8 +233,6 @@ public class XsltBasedCodeGeneratorTest {
         // behaviour specification
         when(fileMock.getAbsolutePath()).thenReturn(filePath);
 
-        final XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                Mockito.CALLS_REAL_METHODS);
         doReturn(fileName).when(xsltBasedCodeGenerator).buildFileName(null);
 
         xsltBasedCodeGenerator.destinationDirectory = fileMock;

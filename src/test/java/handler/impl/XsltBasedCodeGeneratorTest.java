@@ -1,37 +1,10 @@
 package handler.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.doThrow;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyNew;
-import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
-import static org.powermock.api.mockito.PowerMockito.verifyStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
-
-import java.io.File;
-
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.api.support.membermodification.MemberMatcher;
 import org.powermock.api.support.membermodification.MemberModifier;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -40,34 +13,43 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
+import javax.xml.transform.*;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
+
 /**
- * 
- * 
  * @author Denys Solyanyk <peacemaker@ukr.net>
- * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 9 июня 2011
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ XsltBasedCodeGenerator.class, TransformerFactory.class })
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
+@PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
+@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class XsltBasedCodeGeneratorTest {
 
-    final String                     filePath               = "/path/to/file";
-    final String                     fileName               = "test.txt";
+    final String filePath = "/path/to/file";
+    final String fileName = "test.txt";
 
     @Mock
-    protected Logger                 loggerMock;
+    protected Logger loggerMock;
 
     @Mock
-    protected File                   fileMock;
+    protected File fileMock;
 
-    protected XsltBasedCodeGenerator xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class,
-                                                                    Mockito.CALLS_REAL_METHODS);
+    protected XsltBasedCodeGenerator xsltBasedCodeGenerator;
 
     @Before
     public void setUp() {
         Whitebox.setInternalState(FileHandler.class, loggerMock);
-        MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.initMocks(this);
+        xsltBasedCodeGenerator = mock(XsltBasedCodeGenerator.class, Mockito.CALLS_REAL_METHODS);
     }
 
     @Test

@@ -1,11 +1,7 @@
 /**
- * 
+ *
  */
 package handler.impl;
-
-import static org.powermock.api.mockito.PowerMockito.mock;
-
-import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,39 +9,38 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
+import java.io.File;
+
+import static org.powermock.api.mockito.PowerMockito.mock;
+
 /**
- * 
- * 
  * @author Denys Solyanyk <peacemaker@ukr.net>
- * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 24 июня 2011
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CodeGenerator.class)
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
+@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class CodeGeneratorTest {
 
-    final String            destinationPath = "/path/to/destination/folder";
+    @Mock
+    protected Logger loggerMock;
 
     @Mock
-    protected Logger        loggerMock;
+    protected File fileMock;
 
-    @Mock
-    protected File          fileMock;
-
-    protected CodeGenerator codeGenerator   = mock(CodeGenerator.class, Mockito.CALLS_REAL_METHODS);
+    protected CodeGenerator codeGenerator;
 
     @Before
     public void setUp() {
         Whitebox.setInternalState(FileHandler.class, loggerMock);
-        MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.initMocks(this);
+        codeGenerator = mock(CodeGenerator.class, Mockito.CALLS_REAL_METHODS);
     }
 
     @Test

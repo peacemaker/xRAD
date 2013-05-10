@@ -1,18 +1,7 @@
 /**
- * 
+ *
  */
 package handler.impl;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
-import static org.powermock.api.mockito.PowerMockito.when;
-
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
@@ -28,32 +16,38 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.slf4j.Logger;
 
+import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
+
 /**
- * 
- * 
  * @author Denys Solyanyk <peacemaker@ukr.net>
- * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 9 июня 2011
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FileHandler.class)
-@SuppressStaticInitializationFor({ "handler.impl.FileHandler", "org.slf4j.LoggerFactory" })
+@SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class FileHandlerTest {
 
-    final String          filePath    = "/path/to/file";
+    final String filePath = "/path/to/file";
 
     @Mock
-    protected Logger      loggerMock;
+    protected Logger loggerMock;
 
     @Mock
-    protected File        fileMock;
+    protected File fileMock;
 
-    protected FileHandler fileHandler = PowerMockito.mock(FileHandler.class, Mockito.CALLS_REAL_METHODS);
+    protected FileHandler fileHandler;
 
     @Before
     public void setUp() {
         Whitebox.setInternalState(FileHandler.class, loggerMock);
-        MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.initMocks(this);
+        fileHandler = PowerMockito.mock(FileHandler.class, Mockito.CALLS_REAL_METHODS);
     }
 
     @Test
@@ -80,7 +74,6 @@ public class FileHandlerTest {
     }
 
     /**
-     * 
      * @throws Exception
      */
     @Test

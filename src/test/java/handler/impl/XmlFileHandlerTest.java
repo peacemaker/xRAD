@@ -1,34 +1,13 @@
 /**
- * 
+ *
  */
 package handler.impl;
-
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.powermock.api.mockito.PowerMockito.doNothing;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.verifyNoMoreInteractions;
-import static org.powermock.api.mockito.PowerMockito.when;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -38,10 +17,21 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.powermock.api.mockito.PowerMockito.*;
+
 /**
- * 
  * @author Denys Solyanyk <peacemaker@ukr.net>
- * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
  * @since 12 июня 2011
  */
 @RunWith(PowerMockRunner.class)
@@ -49,19 +39,19 @@ import org.xml.sax.SAXException;
 @SuppressStaticInitializationFor({"handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class XmlFileHandlerTest {
 
-    protected Logger         loggerMock;
-
-    protected XmlFileHandler xmlFileHandler = Mockito.mock(XmlFileHandler.class, Mockito.CALLS_REAL_METHODS);
+    @Mock
+    protected Logger loggerMock;
 
     @Mock
-    protected File           fileMock;
+    protected File fileMock;
+
+    protected XmlFileHandler xmlFileHandler;
 
     @Before
     public void setUp() {
-        // create static mock Logger object
-        loggerMock = PowerMockito.mock(Logger.class);
         Whitebox.setInternalState(FileHandler.class, loggerMock);
-        MockitoAnnotations.initMocks(this);
+        //MockitoAnnotations.initMocks(this);
+        xmlFileHandler = Mockito.mock(XmlFileHandler.class, Mockito.CALLS_REAL_METHODS);
     }
 
     @Test

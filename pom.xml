@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.generator.app</groupId>
-    <artifactId>generator</artifactId>
+    <groupId>com.xrad.app</groupId>
+    <artifactId>xrad</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>The Code Generator Project</name>
+    <name>The xRAD Project</name>
     <url>http://maven.apache.org</url>
     <organization>
         <name>Xeon</name>
@@ -22,12 +22,15 @@
         <spring.context.version>3.2.2.RELEASE</spring.context.version>
         <jaxp.api.version>1.4.2</jaxp.api.version>
         <saxon.version>9.1.0.8</saxon.version>
+        <args4j.version>2.0.23</args4j.version>
 
 
         <maven.checkstyle.plugin.version>2.10</maven.checkstyle.plugin.version>
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <maven.dependency.plugin.version>2.7</maven.dependency.plugin.version>
         <maven.eclipse.plugin.version>2.9</maven.eclipse.plugin.version>
         <maven.failsafe.plugin.version>2.14.1</maven.failsafe.plugin.version>
+        <maven.jar.plugin.version>2.4</maven.jar.plugin.version>
         <maven.javadoc.plugin.version>2.9</maven.javadoc.plugin.version>
         <maven.jxr.plugin.version>2.3</maven.jxr.plugin.version>
         <maven.pmd.plugin.version>3.0.1</maven.pmd.plugin.version>
@@ -101,10 +104,16 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.context.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+            <version>${args4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
-        <finalName>generator-1.0-SNAPSHOT</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
 
         <testResources>
             <testResource>
@@ -145,7 +154,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>${maven.dependency.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -185,7 +194,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>${maven.jar.plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -282,6 +291,25 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven.dependency.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>
+                                ${project.build.directory}/lib
+                            </outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
                 <version>${maven.eclipse.plugin.version}</version>
                 <configuration>
@@ -301,6 +329,37 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.plugin.version}</version>
+                <!--
+                Все плагины Maven показывают свою конфигурацию через элемент <configuration>.
+                В этом примере maven-jar-plugin изменяет его атрибут archive и, в частности, атрибут manifest, который
+                управляет содержимым файла MANIFEST.MF. В него входят три элемента:
+
+                    addClassPath: установка значения true этого элемента предписывает maven-jar-plugin добавить в файл
+                    MANIFEST.MF элемент Class-Path и включить в этот элемент Class-Path все зависимости.
+
+                    classpathPrefix: если вы планируете включить все зависимости в тот же каталог, что и создаваемый
+                    JAR-файл, то этот элемент можно опустить; в противном случае используйте classpathPrefix для
+                    указания префиксов всех зависимых JAR-файлов. classpathPrefix в листинге 1 указывает, что все
+                    зависимости должны быть расположены в папке lib, заданной относительно архива.
+
+                    mainClass: этот элемент используется для определения имени класса, который выполняется при запуске
+                    пользователем JAR-файла командой java -jar.
+                -->
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>impl.Console</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -333,7 +392,7 @@
                     <check>
                         <branchRate>85</branchRate>
                         <lineRate>85</lineRate>
-                        <haltOnFailure>true</haltOnFailure>
+                        <haltOnFailure>false</haltOnFailure>
                         <totalBranchRate>85</totalBranchRate>
                         <totalLineRate>85</totalLineRate>
                         <packageLineRate>85</packageLineRate>

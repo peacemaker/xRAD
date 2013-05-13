@@ -23,6 +23,7 @@
         <jaxp.api.version>1.4.2</jaxp.api.version>
         <saxon.version>9.1.0.8</saxon.version>
         <args4j.version>2.0.23</args4j.version>
+        <jcl.over.slf4j.version>1.7.5</jcl.over.slf4j.version>
 
 
         <maven.checkstyle.plugin.version>2.10</maven.checkstyle.plugin.version>
@@ -103,12 +104,24 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>${spring.context.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>args4j</groupId>
             <artifactId>args4j</artifactId>
             <version>${args4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${jcl.over.slf4j.version}</version>
         </dependency>
     </dependencies>
 

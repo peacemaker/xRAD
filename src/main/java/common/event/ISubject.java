@@ -4,7 +4,7 @@
 package common.event;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
+ * @author Denys Solianyk <peacemaker@ukr.net>
  * @since 13 июля 2011
  */
 public interface ISubject<E> {

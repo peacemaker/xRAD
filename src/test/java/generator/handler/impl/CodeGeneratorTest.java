@@ -20,8 +20,8 @@ import java.io.File;
 import static org.powermock.api.mockito.PowerMockito.mock;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @since 24 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-24
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CodeGenerator.class)

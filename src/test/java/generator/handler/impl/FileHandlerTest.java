@@ -25,8 +25,8 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @since 9 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-09
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FileHandler.class)

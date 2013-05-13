@@ -18,7 +18,7 @@ import java.io.File;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author denis
+ * @author Denys Solianyk <peacemaker@ukr.net>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PhpObjectGenerator.class)

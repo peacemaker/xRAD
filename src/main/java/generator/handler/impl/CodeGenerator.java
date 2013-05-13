@@ -6,8 +6,8 @@ package generator.handler.impl;
 import java.io.File;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @since 23 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-23
  */
 public abstract class CodeGenerator extends FileHandler {
 

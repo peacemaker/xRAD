@@ -11,8 +11,8 @@ import java.io.File;
 import java.util.regex.Pattern;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @since 9 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-09
  */
 abstract public class FileHandler implements IObserver<File> {
 

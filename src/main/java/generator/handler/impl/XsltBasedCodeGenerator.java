@@ -9,9 +9,8 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @copyright 2010-2011 Denys Solyanyk <peacemaker@ukr.net>
- * @since 24 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-24
  */
 public abstract class XsltBasedCodeGenerator extends CodeGenerator {
 

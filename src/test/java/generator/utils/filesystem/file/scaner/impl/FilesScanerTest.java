@@ -19,7 +19,7 @@ import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 /**
- * @author denis
+ * @author Denys Solianyk <peacemaker@ukr.net>
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FilesScaner.class)

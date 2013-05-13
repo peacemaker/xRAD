@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author denis
+ * @author Denys Solianyk <peacemaker@ukr.net>
  */
 public class PhpObjectGenerator extends XsltBasedCodeGenerator {
 

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Denys Solyanyk <peacemaker@ukr.net>
- * @since 9 июня 2011
+ * @author Denys Solianyk <peacemaker@ukr.net>
+ * @since 2011-06-09
  */
 public class FilesScaner implements IFilesScaner, ISubject<File> {
 

@@ -1,15 +1,15 @@
 /**
  *
  */
-package common.utils.filesystem.file.scaner;
+package common.utils.filesystem.file.scanner;
 
 import java.io.File;
 
 /**
  * @author Denys Solianyk <peacemaker@ukr.net>
- * @since 9 июня 2011
+ * @since 2011-06-09
  */
-public interface IFilesScaner {
+public interface IFilesScanner {
     public abstract void setSourceDirectory(File file);
 
     public abstract File getSourceDirectory();

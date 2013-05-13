@@ -1,4 +1,4 @@
-package generator.utils.filesystem.file.scaner.impl;
+package generator.utils.filesystem.file.scanner.impl;
 
 import common.event.IObserver;
 import org.junit.Before;
@@ -22,9 +22,9 @@ import static org.powermock.api.mockito.PowerMockito.*;
  * @author Denys Solianyk <peacemaker@ukr.net>
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(FilesScaner.class)
-@SuppressStaticInitializationFor({"generator.utils.filesystem.file.scaner.impl.FilesScaner", "org.slf4j.LoggerFactory"})
-public class FilesScanerTest {
+@PrepareForTest(FilesScanner.class)
+@SuppressStaticInitializationFor({"generator.utils.filesystem.file.scanner.impl.FilesScanner", "org.slf4j.LoggerFactory"})
+public class FilesScannerTest {
 
     final String directoryPath = "/path/to/source/dir";
 
@@ -36,7 +36,7 @@ public class FilesScanerTest {
     public void setUp() {
         // create static mock Logger object
         loggerMock = PowerMockito.mock(Logger.class);
-        Whitebox.setInternalState(FilesScaner.class, loggerMock);
+        Whitebox.setInternalState(FilesScanner.class, loggerMock);
         // create mock File object
         directoryMock = PowerMockito.mock(File.class);
     }
@@ -102,7 +102,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#setSourceDirectory(File)}.
+     * Test method for {@link FilesScanner#setSourceDirectory(File)}.
      *
      * @throws Exception
      */
@@ -112,7 +112,7 @@ public class FilesScanerTest {
         doReturn(directoryPath).when(directoryMock).getAbsolutePath();
 
         // begin test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
         object.setSourceDirectory(directoryMock);
         assertEquals(object.sourceDirectory, directoryMock);
         assertEquals(object.getSourceDirectory(), directoryMock);
@@ -122,7 +122,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#execute()}.
+     * Test method for {@link FilesScanner#execute()}.
      * |-not exist folder
      *
      * @throws Exception
@@ -134,7 +134,7 @@ public class FilesScanerTest {
         doReturn(directoryPath).when(directoryMock).getAbsolutePath();
 
         // do test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
         object.sourceDirectory = directoryMock;
 
         assertFalse(object.execute());
@@ -154,7 +154,7 @@ public class FilesScanerTest {
         when(directoryMock.getAbsolutePath()).thenReturn(directoryPath);
 
         // do test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
         object.sourceDirectory = directoryMock;
 
         assertFalse(object.execute());
@@ -168,7 +168,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#execute()}.
+     * Test method for {@link FilesScanner#execute()}.
      * |-not exist folder
      *
      * @throws Exception
@@ -182,7 +182,7 @@ public class FilesScanerTest {
         when(directoryMock.getAbsolutePath()).thenReturn(directoryPath);
 
         // do test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
         object.sourceDirectory = directoryMock;
 
         assertTrue(object.execute());
@@ -197,7 +197,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#execute()}.
+     * Test method for {@link FilesScanner#execute()}.
      * |-directoryMock
      * | |
      * | |-file01.xml
@@ -212,7 +212,7 @@ public class FilesScanerTest {
         final File file02 = createFileMock("folder0A/file02.xml");
         final File sourceDirectoryMock = createSourceDirectoryMock(new File[]{file01, file02});
 
-        final FilesScaner object = spy(new FilesScaner());
+        final FilesScanner object = spy(new FilesScanner());
         // behaviour specification
         doNothing().when(object, "notifyObservers", file01);
         doNothing().when(object, "notifyObservers", file02);
@@ -234,7 +234,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#execute()}.
+     * Test method for {@link FilesScanner#execute()}.
      * |-directoryMock
      * | |
      * | |-subfolder01
@@ -251,7 +251,7 @@ public class FilesScanerTest {
         final File subfolder01 = createDirectoryMock(new File[]{file01, file02});
         final File sourceDirectoryMock = createSourceDirectoryMock(new File[]{subfolder01});
 
-        final FilesScaner object = spy(new FilesScaner());
+        final FilesScanner object = spy(new FilesScanner());
         // behaviour specification
         doNothing().when(object, "notifyObservers", file01);
         doNothing().when(object, "notifyObservers", file02);
@@ -272,7 +272,7 @@ public class FilesScanerTest {
     }
 
     /**
-     * Test method for {@link FilesScaner#execute()}.
+     * Test method for {@link FilesScanner#execute()}.
      * |-directoryMock
      * | |
      * | |-subfolder01
@@ -301,7 +301,7 @@ public class FilesScanerTest {
         final File sourceDirectoryMock = createSourceDirectoryMock(new File[]{subfolder01, subfolder02, subfolder03,
                 file04});
 
-        final FilesScaner object = PowerMockito.spy(new FilesScaner());
+        final FilesScanner object = PowerMockito.spy(new FilesScanner());
         // behaviour specification
         doNothing().when(object, "notifyObservers", file01);
         doNothing().when(object, "notifyObservers", file02);
@@ -338,7 +338,7 @@ public class FilesScanerTest {
         doNothing().when(listener).update(file);
 
         // do test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
         object.attach(listener);
         object.notifyObservers(file);
 
@@ -365,7 +365,7 @@ public class FilesScanerTest {
         doNothing().when(listener03).update(file);
 
         // do test
-        final FilesScaner object = new FilesScaner();
+        final FilesScanner object = new FilesScanner();
 
         object.attach(listener01);
         object.attach(listener02);

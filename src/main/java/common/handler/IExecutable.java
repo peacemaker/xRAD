@@ -5,7 +5,7 @@ package common.handler;
 
 /**
  * @author Denys Solianyk <peacemaker@ukr.net>
- * @since 13 июня 2011
+ * @since 2011-06-13
  */
 public interface IExecutable {
 

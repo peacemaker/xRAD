@@ -1,8 +1,8 @@
-package generator.utils.filesystem.file.scaner.impl;
+package generator.utils.filesystem.file.scanner.impl;
 
 import common.event.IObserver;
 import common.event.ISubject;
-import common.utils.filesystem.file.scaner.IFilesScaner;
+import common.utils.filesystem.file.scanner.IFilesScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,15 +14,15 @@ import java.util.List;
  * @author Denys Solianyk <peacemaker@ukr.net>
  * @since 2011-06-09
  */
-public class FilesScaner implements IFilesScaner, ISubject<File> {
+public class FilesScanner implements IFilesScanner, ISubject<File> {
 
-    static Logger logger = LoggerFactory.getLogger(FilesScaner.class);
+    static Logger logger = LoggerFactory.getLogger(FilesScanner.class);
 
     protected File sourceDirectory;
 
     protected List<IObserver<File>> observers;
 
-    public FilesScaner() {
+    public FilesScanner() {
         observers = new ArrayList<IObserver<File>>();
     }
 

@@ -1,7 +1,7 @@
 /**
  *
  */
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +25,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CodeGenerator.class)
-@SuppressStaticInitializationFor({"generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
+@SuppressStaticInitializationFor({"xrad.generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class CodeGeneratorTest {
 
     @Mock

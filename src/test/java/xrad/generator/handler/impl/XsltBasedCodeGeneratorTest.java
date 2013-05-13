@@ -1,4 +1,4 @@
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +31,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({XsltBasedCodeGenerator.class, TransformerFactory.class})
-@SuppressStaticInitializationFor({"generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
+@SuppressStaticInitializationFor({"xrad.generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class XsltBasedCodeGeneratorTest {
 
     final String filePath = "/path/to/file";

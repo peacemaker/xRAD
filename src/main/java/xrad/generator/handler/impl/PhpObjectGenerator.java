@@ -1,7 +1,7 @@
 /**
  *
  */
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ public class PhpObjectGenerator extends XsltBasedCodeGenerator {
     /*
      * (non-Javadoc)
      * 
-     * @see generator.handler.impl.XsltBasedCodeGenerator#buildFileName(java.lang.String)
+     * @see xrad.generator.handler.xrad.impl.XsltBasedCodeGenerator#buildFileName(java.lang.String)
      */
     @Override
     protected String buildFileName(String result) {

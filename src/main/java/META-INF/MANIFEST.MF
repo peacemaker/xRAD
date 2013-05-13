@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: impl.Console
+Main-Class: xrad.impl.Console

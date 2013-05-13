@@ -1,4 +1,4 @@
-package generator.utils.filesystem.file.scanner.impl;
+package xrad.generator.utils.filesystem.file.scanner.impl;
 
 import common.event.IObserver;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(FilesScanner.class)
-@SuppressStaticInitializationFor({"generator.utils.filesystem.file.scanner.impl.FilesScanner", "org.slf4j.LoggerFactory"})
+@SuppressStaticInitializationFor({"xrad.generator.utils.filesystem.file.scanner.impl.FilesScanner", "org.slf4j.LoggerFactory"})
 public class FilesScannerTest {
 
     final String directoryPath = "/path/to/source/dir";

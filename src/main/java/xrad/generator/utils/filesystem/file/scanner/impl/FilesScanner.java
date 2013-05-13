@@ -1,4 +1,4 @@
-package generator.utils.filesystem.file.scanner.impl;
+package xrad.generator.utils.filesystem.file.scanner.impl;
 
 import common.event.IObserver;
 import common.event.ISubject;

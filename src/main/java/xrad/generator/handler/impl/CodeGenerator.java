@@ -1,7 +1,7 @@
 /**
  *
  */
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import java.io.File;
 

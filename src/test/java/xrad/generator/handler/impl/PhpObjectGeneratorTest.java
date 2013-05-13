@@ -1,7 +1,7 @@
 /**
  *
  */
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(PhpObjectGenerator.class)
-@SuppressStaticInitializationFor({"generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
+@SuppressStaticInitializationFor({"xrad.generator.handler.impl.FileHandler", "org.slf4j.LoggerFactory"})
 public class PhpObjectGeneratorTest {
 
     @Mock
@@ -42,7 +42,7 @@ public class PhpObjectGeneratorTest {
     }
 
     /**
-     * Test method for {@link generator.handler.impl.PhpObjectGenerator#buildFileName(java.lang.String)}.
+     * Test method for {@link xrad.generator.handler.impl.PhpObjectGenerator#buildFileName(java.lang.String)}.
      */
     @Test
     public final void testBuildFileNameWithNullResult() {

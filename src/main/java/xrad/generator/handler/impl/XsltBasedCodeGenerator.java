@@ -1,7 +1,7 @@
 /**
  *
  */
-package generator.handler.impl;
+package xrad.generator.handler.impl;
 
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
@@ -17,7 +17,7 @@ public abstract class XsltBasedCodeGenerator extends CodeGenerator {
     /*
      * (non-Javadoc)
      * 
-     * @see generator.handler.impl.FileHandler#processFile(java.io.File)
+     * @see xrad.generator.handler.xrad.impl.FileHandler#processFile(java.io.File)
      */
     @Override
     protected boolean processFile(final File file) {
